@@ -10,9 +10,9 @@ Examples of fields that can be converet include
 * ACF Repeater Sub Fields
 * ACF Flexible Content Sub Fields
 
-Requires 
-ACF Pro: http://www.advancedcustomfields.com/pro/
-Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
+Requires: 
+* ACF Pro: http://www.advancedcustomfields.com/pro/
+* Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
 
 Custom field plugins can store data in the DB in non-standard ways which make it difficult to query this
 data using a standard WP_Query.
