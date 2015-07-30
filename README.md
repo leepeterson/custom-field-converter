@@ -15,7 +15,7 @@ Requires:
 * Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
 
 Custom field plugins can store data in the DB in non-standard ways which make it difficult to query this
-data using a standard WP_Query.
+data using a standard `WP_Query()`.
 
 The standard storage method that WP uses to store multiple values for a single `meta_key` is to use multiple 
 DB rows with the same `meta_key` and a different value for each.
