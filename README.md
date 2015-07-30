@@ -1,13 +1,26 @@
 # Custom Field Converter
 
-Convert custom fields stored in no WP postmeta DB storage format to standard WP storage format.
+***This is a work in progress, it is not complete and should not be uses. It will not work yet!***
 
-Requires ACF Pro & Blunt Ajax
+Convert custom fields stored in formats other that standard WP postmeta DB storage format into standard WP
+storage format.
 
-Custom field plugin can store data in the DB in non-standard ways.
+Examples of fields that can be converet include
+* Fields stored as serialized data
+* ACF Repeater Sub Fields
+* ACF Flexible Content Sub Fields
 
-The standard storage method for WO to store multiple values for a single `meta_key` is to use multiple DB rows with the same `meta_key`.
+Requires 
+ACF Pro: http://www.advancedcustomfields.com/pro/
+Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
 
-Some custom field plugins store data in serialized arrays. This data storage makes it difficult to do queries with `WP_Query`.
+Custom field plugins can store data in the DB in non-standard ways which make it difficult to query this
+data using a standard WP_Query.
 
-This plugin will convert data of these fields to standard storage formate using a differnt `meta_key` to make the values them easier to query.
+The standard storage method that WP uses to store multiple values for a single `meta_key` is to use multiple 
+DB rows with the same `meta_key` and a different value for each.
+
+This plugin will convert data of these fields to standard storage format using a differnt `meta_key` to make 
+the values in them easier to query.
+
+This plugin assumes that the user understands how data is stored in different types of custom fields.
