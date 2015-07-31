@@ -5,6 +5,7 @@
 	
 	class blunt_field_converter {
 		
+		private $name = '';
 		private $id = 0;
 		private $active = false;
 		private $hook = '';
@@ -12,7 +13,6 @@
 		private $post_types = array();
 		private $fields = array();
 		private $related_posts = array();
-		private $name = '';
 		
 		public function __construct($id) {
 			// build this converter
@@ -24,6 +24,7 @@
 		} // end public function __construct
 		
 		private function build_related_posts() {
+			$related_posts = array();
 			$repeater = 'related_posts';
 			$count = intval(get_post_meta($this->id, $repeater, true));
 			if (!$count) {
@@ -32,47 +33,54 @@
 			for ($i=0; $i<$count; $i++) {
 				$related_post = $this->build_related_post($repeater.'_'.$i.'_');
 				if (count($related_post)) {
-					$this->related_posts[] = $related_post;
+					$related_posts[] = $related_post;
 				}
 			}
+			return $related_posts;
 		} // end private function build_related_posts
 		
 		private function build_related_post($row) {
 			$related_post = array();
 			$repeater = $row.'pointer';
+			//echo $repeater,'<br>';
 			$count = intval(get_post_meta($this->id, $repeater, true));
 			if (!count($repeater)) {
 				return;
 			}
 			$related_post['pointer'] = array();
+			//echo ($count),'<br>';
 			for ($i=0; $i<$count; $i++) {
-				$related_post['pointer'][] = $this->built_pointer_field($repeater.'_'.$i.'_');
+				$related_post['pointer'][] = $this->build_pointer_field($repeater.'_'.$i.'_');
 			}
 			$related_post['fields'] = $this->build_fields($row);
+			return $related_post;
 		} // end private function build_related_post
 		
-		private function built_pointer_field($row) {
+		private function build_pointer_field($row) {
+			//echo $row,'<br>';
 			$field = array(
 				'type' => get_post_meta($this->id, $row.'type', true),
 				'name' => get_post_meta($this->id, $row.'name', true)
 			);
-		} // end private function built_pointer_field
+			//print_r($field); echo '<br>';
+			return $field;
+		} // end private function build_pointer_field
 		
 		private function build_fields($row='') {
+			$fields = array();
 			$repeater = $row.'fields';
 			$count = intval(get_post_meta($this->id, $repeater, true));
-			if (!$count) {
-				return;
-			}
 			for ($i=0; $i<$count; $i++) {
-				$this->fields[] = $this->build_field($repeater.'_'.$i.'_');
+				$fields[] = $this->build_field($repeater.'_'.$i.'_');
 			}
+			return $fields;
 		} // end private function build_fields
 		
 		private function build_field($row) {
 			$field = array();
 			$type = $field['type'] = get_post_meta($this->id, $row.'type', true);
 			$hierarchy = array();
+			//echo $type, '<br>';
 			if ($type == 'serialized') {
 				$hierarchy[] = array(
 					'type' => $type,
@@ -80,8 +88,11 @@
 				);
 			} else {
 				// nested field
+				//echo 'here <br>';
 				$repeater = $row.'hierarchy';
+				//echo $repeater,'<br>';
 				$count = intval(get_post_meta($this->id, $repeater, true));
+				//echo $count,'<br>';
 				for ($i=0; $i<$count; $i++) {
 					$hierarchy[] = array(
 						'type' => get_post_meta($this->id, $repeater.'_'.$i.'_type', true),
@@ -89,6 +100,7 @@
 					);
 				} // end for
 			} // end if else
+			$field['hierarchy'] = $hierarchy;
 			$field['meta_key'] = get_post_meta($this->id, $row.'meta_key', true);
 			return $field;
 		} // end private function build_field
@@ -122,8 +134,8 @@
 			} else {
 				$this->priority = intval($priority);
 			}
-			$this->build_fields();
-			$this->build_related_posts();
+			$this->fields = $this->build_fields();
+			$this->related_posts = $this->build_related_posts();
 			if (!count($this->fields) && !count($this->related_posts)) {
 				$this->active = false;
 			}

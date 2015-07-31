@@ -15,6 +15,7 @@
 		
 		public function init() {
 			$this->load_converters();
+			//echo '<pre>'; print_r($this->converters); die;
 		} // end public function init
 		
 		private function load_converters() {
