@@ -102,6 +102,13 @@
 			} // end if else
 			$field['hierarchy'] = $hierarchy;
 			$field['meta_key'] = get_post_meta($this->id, $row.'meta_key', true);
+			$empty = get_post_meta($this->id, $row.'empty', true);
+			if (!$empty) {
+				$field['empty'] = false;
+			} else {
+				$field['empty'] = true;
+			}
+			$field['default'] = get_post_meta($this->id, $row.'default', true);
 			return $field;
 		} // end private function build_field
 		

@@ -39,7 +39,7 @@
 				'title' => __('Field Converter Settings'),
 				'fields' => array(
 					array(
-						'key' => 'field01acfcfc00029',
+						'key' => 'field_01acfcfc00029',
 						'label' => __('Active'),
 						'name' => 'active',
 						'type' => 'true_false',
@@ -189,6 +189,31 @@
 								'instructions' => __('Enter the meta_key name for the converted data. Ensure that this meta_key is unique for the post type.'),
 								'required' => 1,
 								'maxlength' => 64,
+							),
+							array(
+								'key' => 'field_01acfcfc00030',
+								'label' => __('Include Empty Values?'),
+								'name' => 'Include Empty Values?',
+								'type' => 'true_false',
+								'instructions' => __('Should empty values be included in conversion? If this is not set to true then empty fields to be converted will be ignored.'),
+								'default_value' => 0,
+							),
+							array (
+								'key' => 'field_01acfcfc00032',
+								'label' => __('Default Value'),
+								'name' => 'default',
+								'type' => 'text',
+								'instructions' => __('Enter the default value to be inserted if the value to be converted is empty.'),
+								'conditional_logic' => array (
+									array (
+										array (
+											'field' => 'field_01acfcfc00030',
+											'operator' => '==',
+											'value' => '1',
+										),
+									),
+								),
+								'default_value' => '',
 							),
 						),
 					),
@@ -359,6 +384,31 @@
 										'instructions' => __('Enter the meta_key name for the converted data. Ensure that this meta_key is unique for the post type.'),
 										'required' => 1,
 										'maxlength' => 64,
+									),
+									array(
+										'key' => 'field_01acfcfc00031',
+										'label' => __('Include Empty Values'),
+										'name' => 'empty',
+										'type' => 'true_false',
+										'instructions' => __('Should empty values be included in conversion? If this is not set to true then empty fields to be converted will be ignored.'),
+										'default_value' => 0,
+									),
+									array (
+										'key' => 'field_01acfcfc00033',
+										'label' => __('Default Value'),
+										'name' => 'default',
+										'type' => 'text',
+										'instructions' => __('Enter the default value to be inserted if the value to be converted is empty.'),
+										'conditional_logic' => array (
+											array (
+												array (
+													'field' => 'field_01acfcfc00031',
+													'operator' => '==',
+													'value' => '1',
+												),
+											),
+										),
+										'default_value' => '',
 									),
 								),
 							),
