@@ -1,0 +1,11 @@
+
+	To Do
+	
+	* Create post type & related post type
+	* Create custom fields to be converted
+	* Create test posts
+	* Create converter to convert fields in test posts
+	* Add and test hooks & hook priority for converter
+	* Convert fields & test
+	* Add Check & Repair Feature
+	* Add Nuke Feature
