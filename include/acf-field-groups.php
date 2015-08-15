@@ -12,7 +12,7 @@
 		public function __construct() {
 			add_action('acf/include_fields', array($this, 'acf_include_fields'));
 			add_filter('acf/load_field/key=field_01acfcfc00003', array($this, 'acf_load_post_types'));
-			add_filter('acf/load_field/key=field_01acfcfc00033', array($this, ''));
+			add_filter('acf/load_field/key=field_01acfcfc00024', array($this, ''));
 		} // end public function __construct
 		
 		public function acf_load_sites_field($field) {
@@ -108,7 +108,7 @@
 							'conditional_logic' => array(
 								array(
 									array(
-										$prefix.'00008',
+										'field' => $prefix.'00008',
 										'operator' => '==',
 										'value' => 'nested',
 									),
@@ -119,7 +119,7 @@
 							'button_label' => __('Add Field'),
 							'sub_fields' => array(
 								array(
-									$prefix.'00011',
+									'key' => $prefix.'00011',
 									'label' => __('Field Name'),
 									'name' => 'name',
 									'type' => 'text',
@@ -127,7 +127,7 @@
 									'required' => 1,
 								),
 								array(
-									$prefix.'00012',
+									'key' => $prefix.'00012',
 									'label' => __('Field Type'),
 									'name' => 'type',
 									'type' => 'select',
@@ -154,15 +154,15 @@
 							'maxlength' => 64,
 						),
 						array(
-							'key' => $prefix.'00030',
+							'key' => $prefix.'00022',
 							'label' => __('Include Empty Values?'),
 							'name' => 'Include Empty Values?',
 							'type' => 'true_false',
 							'instructions' => __('Should empty values be included in conversion? If this is not set to true then empty fields to be converted will be ignored.'),
 							'default_value' => 0,
 						),
-						array (
-							'key' => $prefix.'00032',
+						array(
+							'key' => $prefix.'00023',
 							'label' => __('Default Value'),
 							'name' => 'default',
 							'type' => 'text',
@@ -170,15 +170,15 @@
 							'conditional_logic' => array (
 								array (
 									array (
-										$prefix.'00030',
+										$prefix.'00022',
 										'operator' => '==',
 										'value' => '1',
 									),
 								),
 							),
 							'default_value' => '',
-						),
-					),
+						)
+					)
 				)
 			);
 			return $fields;
@@ -233,7 +233,7 @@
 			if (is_multisite()) {
 				// add selection to relate a post from a different site
 				$field = array(
-					'key' => 'field_01acfcfc00033',
+					'key' => 'field_01acfcfc00024',
 					'label' => __('Site'),
 					'name' => 'type',
 					'type' => 'radio',
@@ -286,7 +286,7 @@
 		private function field_converter_setting_fields() {
 			$fields = array(
 				array(
-					'key' => 'field_01acfcfc00029',
+					'key' => 'field_01acfcfc00021',
 					'label' => __('Active'),
 					'name' => 'active',
 					'type' => 'true_false',
@@ -339,6 +339,7 @@
 					'step' => 1,
 				)
 			);
+			return $fields;
 		} // end private function field_converter_setting_fields
 		
 		private function converter_field_group() {
@@ -347,6 +348,7 @@
 				$this->field_converter_fields_fields(),
 				$this->field_converter_related_fields()
 			);
+			//echo '<pre>'; print_r($fields); die;
 			$field_group = array(
 				'key' => 'group_01acfcfc00001',
 				'title' => __('Field Converter Settings'),
