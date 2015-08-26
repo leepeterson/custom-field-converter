@@ -235,7 +235,7 @@
 				$field = array(
 					'key' => 'field_01acfcfc00024',
 					'label' => __('Site'),
-					'name' => 'type',
+					'name' => 'site',
 					'type' => 'radio',
 					'instructions' => 'This site is on a multisite installation. Field converter can import data from posts on other sites in this network. If these related posts are on another site please select the site.',
 					'choices' => array(

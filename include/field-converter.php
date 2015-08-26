@@ -52,6 +52,10 @@
 			for ($i=0; $i<$count; $i++) {
 				$related_post['pointer'][] = $this->build_pointer_field($repeater.'_'.$i.'_');
 			}
+			$related_post['site'] = false;
+			if (is_multisite()) {
+				$related_post['site'] = intval(get_post_meta($this->id, $row.'site', true));
+			}
 			$related_post['fields'] = $this->build_fields($row);
 			return $related_post;
 		} // end private function build_related_post

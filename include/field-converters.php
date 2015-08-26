@@ -23,13 +23,7 @@
 			$args = array(
 				'post_type' => apply_filters('field-converter/post-type', ''),
 				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'meta_query' => array(
-					array(
-						'key' => 'active',
-						'value' => '1'
-					),
-				),
+				'posts_per_page' => -1
 			);
 			$query = new WP_Query($args);
 			if ($query->have_posts()) {
