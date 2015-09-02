@@ -1,12 +1,15 @@
 
 	To Do
 	
-	* Create post type & related post type
-	* Create custom fields to be converted
-	* Create test posts
-	* Create converter to convert fields in test posts
-	* Need to retest building converters because of changes made
+	* Setup second data site
+	* Create post type & related post type & cross site related post
+	* Create custom fields to be converted for related post
+	* Create custom fields to be converted for cross site related post
+	* Create test posts in related posts
+	* Create test posts in cross site related posts
 	* Add and test hooks & hook priority for converter
+	* Create converter to convert fields in test posts
+			* Need to retest building converters because of changes made
 	* Convert fields & test
 	* Add Check & Repair Feature
 	* Add Nuke Feature

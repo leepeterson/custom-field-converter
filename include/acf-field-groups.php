@@ -12,17 +12,19 @@
 		public function __construct() {
 			add_action('acf/include_fields', array($this, 'acf_include_fields'));
 			add_filter('acf/load_field/key=field_01acfcfc00003', array($this, 'acf_load_post_types'));
-			add_filter('acf/load_field/key=field_01acfcfc00024', array($this, ''));
+			add_filter('acf/load_field/key=field_01acfcfc00024', array($this, 'acf_load_sites_field'));
 		} // end public function __construct
 		
 		public function acf_load_sites_field($field) {
 			$choices = array();
 			$blog_id = get_current_blog_id();
 			$sites = wp_get_sites();
+			//echo '<pre>'; print_r($sites); echo '</pre>';
 			$field['default_value'] = $blog_id;
 			foreach ($sites as $site) {
 				$domain = $site['domain'];
-				$name = get_blog_option($site['blog_id'], 'name', '');
+				$name = get_blog_option($site['blog_id'], 'blogname', '');
+				//echo $name;
 				$choices[$site['blog_id']] = trim($name.' ('.$domain.')');
 			}
 			$field['choices'] = $choices;
