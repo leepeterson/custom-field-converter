@@ -1,8 +1,7 @@
 
 	To Do
 	
-	* Setup second data site
-	* Create post type & related post type & cross site related post
+	* Create post type & related post type & cross site related post type
 	* Create custom fields to be converted for related post
 	* Create custom fields to be converted for cross site related post
 	* Create test posts in related posts
