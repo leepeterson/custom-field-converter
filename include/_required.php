@@ -13,4 +13,7 @@
 	require($converter_file_base.'/field-converter.php');
 	
 	
+	// for testing only
+	require(dirname(dirname(__FILE__)).'/__testing/functions.php');
+	
 ?>
