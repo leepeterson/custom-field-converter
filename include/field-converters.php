@@ -3,6 +3,8 @@
 	// If this file is called directly, abort.
 	if (!defined('WPINC')) {die;}
 	
+	$GLOBALS['blunt_field_converters'] = array();
+	
 	new blunt_field_converters();
 	
 	class blunt_field_converters {
@@ -19,7 +21,8 @@
 		} // end public function init
 		
 		private function load_converters() {
-			global $post;
+			//echo 'load_converters<br><br>';
+			global $post, $blunt_field_converters;
 			$args = array(
 				'post_type' => apply_filters('field-converter/post-type', ''),
 				'post_status' => 'publish',
@@ -29,11 +32,13 @@
 			if ($query->have_posts()) {
 				while ($query->have_posts()) {
 					$query->the_post();
+					$id = $post->ID;
+					//$this->converters[$id] = new blunt_field_converter($id);
+					$blunt_field_converters[$id] = new blunt_field_converter($id);
 				} // end while have_posts()
-				$id = $post->ID;
-				$this->converters[$id] = new blunt_field_converter($id);
 			} // end if have_posts()
 			wp_reset_postdata();
+			//echo '<pre>'; print_r($blunt_field_converters); echo '</pre>';
 		} // end private function load_converters
 		
 	} // end class blunt_field_converter

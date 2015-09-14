@@ -1,9 +1,6 @@
 
 	To Do
 	
-	* Create test posts in related posts
-	* Create test posts in cross site related posts
-	* Add and test hooks & hook priority for converter
 	* Create converter to convert fields in test posts
 			* Need to retest building converters because of changes made
 	* Convert fields & test

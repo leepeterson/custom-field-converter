@@ -21,7 +21,24 @@
 			$meta = get_post_meta($id);
 			$this->name = get_the_title($id);
 			$this->build_converter();
+			$this->add_hook();
 		} // end public function __construct
+		
+		public function update_post($post_id) {
+			$post_type = get_post_type($post_id);
+			if (!in_array($post_type, $this->post_types)) {
+				return;
+			}
+			//echo 'update_post ',$post_id,'<br><br>';
+		} // end public function update_post
+		
+		private function add_hook() {
+			if (!$this->active) {
+				return;
+			}
+			//echo 'add hook ',$this->id,'<br><br>';
+			add_action($this->hook, array($this, 'update_post'), $this->priority);
+		} // end private function add_hook
 		
 		private function build_related_posts() {
 			$related_posts = array();
