@@ -47,6 +47,16 @@
 		
 		public function init() {
       // register the post type
+			$capabilities = array(
+				'edit_post' => 'update_core',
+				'read_post' => 'update_core',
+				'delete_post' => 'update_core',
+				'edit_posts' => 'update_core',
+				'edit_others_posts' => 'update_core',
+				'delete_posts' => 'update_core',
+				'publish_posts' => 'update_core',
+				'read_private_posts' => 'update_core'
+			);
 			$post_type = apply_filters('field-converter/post-type', '');
       $args = array(
 				'label' => apply_filters('field-converter/post-type/label', ''),
@@ -56,7 +66,7 @@
 				'show_in_menu' => true,
 				'menu_icon' => 'dashicons-admin-generic',
 				'show_in_admin_bar' => false,
-				'capability_type' => 'post',
+				//'capability_type' => 'post',
 				'map_meta_cap' => true,
 				'hierarchical' => false,
 				'rewrite' => array(
@@ -73,6 +83,7 @@
 					'revisions'
 				),
 				'labels' => apply_filters('field-converter/post-type/labels', array()),
+				'capabilities' => $capabilities,
 			);
       register_post_type($post_type, $args);
 		} // end public function init

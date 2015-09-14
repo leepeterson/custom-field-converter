@@ -10,7 +10,7 @@
 		private $slug = 'field-converter';
 		
 		public function __construct() {
-			add_action('field-converter/init', array($this, 'init'));
+			//add_action('field-converter/init', array($this, 'init'));
 		} // end public function __construct
 		
 		public function init() {

@@ -17,6 +17,11 @@
 		private $clear = array(); // fields to clear
 		private $data = array(); // data to be inserted for post
 		
+		private $reparing = false;
+		private $last_repair = 'never';
+		private $nuking = false;
+		private $last_nuke = 'never';
+		
 		public function __construct($id) {
 			// build this converter
 			$this->id = $id;
@@ -25,7 +30,24 @@
 			$this->name = get_the_title($id);
 			$this->build_converter();
 			$this->add_hook();
+			add_action('acf/update_post', array($this, 'update_this_post'));
 		} // end public function __construct
+		
+		public function update_this_post($post_id) {
+			if ($post_id != $this->id) {
+				return;
+			}
+			$reparing = 0;
+			if ($this->reparing) {
+				$reparing = 1;
+			}
+			update_post_meta($this->id, '_blunt_field_converter_repairing', $this->reparing);
+			$nuking = 0;
+			if ($this->nuking) {
+				$nuking = 1;
+			}
+			update_post_meta($this->id, '_blunt_field_converter_nuking', $this->nuking);
+		} // end public function update_this_post
 		
 		public function update_post($post_id) {
 			$post_type = get_post_type($post_id);
@@ -38,24 +60,105 @@
 			// get data from fields
 			$this->get_fields_data($post_id, $this->fields);
 			// get data from related posts
-			// clear all post meta from fields
-			// add new post meta
-			
-			//echo '<pre>'; print_r($this->related_posts);
-			
 			$this->get_related_data($post_id, $this->related_posts);
 			
 			
-			echo '<pre>'; print_r($this->clear); print_r($this->data); die;
+			//echo '<pre>'; print_r($this->clear); print_r($this->data); die;
+			
+			
+			// clear all post meta from fields
+			$this->clear_post_meta($post_id);
+			// add new post meta
+			$this->update_post_meta($post_id);
+			//echo '<pre>'; print_r($this->related_posts);
 			
 		} // end public function update_post
 		
+		private function clear_post_meta($post_id) {
+			if (!count($this->clear)) {
+				return;
+			}
+			global $wpdb;
+			$post_id = $wpdb->_escape($post_id);
+			$this->clear = $wpdb->_escape($this->clear);
+			$table = $wpdb->get_blog_prefix().'postmeta';
+			foreach ($this->clear as $index => $value) {
+				$this->clear[$index] = '"'.$value.'"';
+			}
+			$query = 'DELETE FROM '.$table.'
+			 					WHERE post_id = "'.$post_id.'" 
+							 		AND meta_key IN ('.implode(', ', $this->clear).')';
+			//echo $query.'<br><br>';
+			//echo $query,'<br /><br />';
+			$success = $wpdb->query($query);
+			/*
+			if ($success === false) {
+				die('delete failed');
+			}
+			echo $success.'<br>';
+			*/
+		} // end private function clear_post_meta
+		
+		private function update_post_meta($post_id) {
+			if (!count($this->data)) {
+				return;
+			}
+			global $wpdb;
+			$post_id = $wpdb->_escape($post_id);
+			$this->data = $wpdb->_escape($this->data);
+			$table = $wpdb->get_blog_prefix().'postmeta';
+			$values = array();
+			$query = 'INSERT INTO '.$table.' (post_id, meta_key, meta_value) VALUES ';
+			foreach ($this->data as $meta_key => $datas) {
+				$meta_key = $wpdb->_escape($meta_key);
+				foreach ($datas as $data) {
+					$values[] = '("'.$post_id.'", "'.$meta_key.'", "'.$data.'")';
+				}
+			}
+			$query .= implode(','."\r\n", $values);
+			//echo $query,'<br /><br />';
+			$success = $wpdb->query($query);
+			/*
+			if ($success === false) {
+				die('insert failed');
+			}
+			echo $success.'<br>';
+			*/
+		} // end private function update_post_meta
+		
 		private function clear_additional_fields() {
-			
+			$fields = apply_filters('blunt_field_converter/clear_fields', array());
+			if (!is_array($fields) && !count($fields)) {
+				return;
+			}
+			foreach ($fields as $field) {
+				if (!in_array($field, $this->clear)) {
+					$this->clear[] = $field;
+				}
+			}
 		} // end private function clear_additional_fields
 		
 		private function add_additional_data() {
-			
+			$fields = apply_filters('blunt_field_converter/additional_data', array());
+			if (!is_array($fields) || !count($fields)) {
+				return;
+			}
+			foreach ($fields as $index => $values) {
+				if (!in_array($index, $this->clear)) {
+					$this->clear[] = $index;
+				}
+				if (!is_array($values) || !count($values)) {
+					continue;
+				}
+				if (!isset($this->data[$index])) {
+					$this->data[$index] = array();
+				}
+				foreach ($values as $value) {
+					if (!in_array($value, $this->data[$index])) {
+						$this->data[$index] = $value;
+					}
+				}
+			}
 		} // end private function add_additional_data
 		
 		private function get_related_data($post_id, $related_posts) {
@@ -320,6 +423,25 @@
 			if (!count($this->fields) && !count($this->related_posts)) {
 				$this->active = false;
 			}
+			
+			$reparing = intval(get_post_meta($this->id, '_blunt_field_converter_repairing', true));
+			if ($reparing) {
+				$this->reparing = true;
+			}
+			$last_repair = get_post_meta($this->id, '_blunt_field_converter_last_repair', true);
+			if ($last_repair) {
+				$this->last_repair = $last_repair;
+			}
+			
+			$nuking = intval(get_post_meta($this->id, '_blunt_field_converter_nuking', true));
+			if ($reparing) {
+				$this->nuking = true;
+			}
+			$last_nuke = get_post_meta($this->id, '_blunt_field_converter_last_nuke', true);
+			if ($last_nuke) {
+				$this->last_nuke = $last_nuke;
+			}
+			
 		} // end private function build_converter
 		
 	} // end class blunt_field_converter

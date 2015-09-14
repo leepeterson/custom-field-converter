@@ -1,9 +1,5 @@
 
 	To Do
 	
-	* Add hook to allow 3rd party add additional fields to clear
-	* Add hook to allow 3rd party add additional data to insert
-	* Clear fields
-	* Insert post meta
-	* Add Check & Repair Feature
+	* Add Check & Repair Feature == Nuke & Rebuild
 	* Add Nuke Feature
