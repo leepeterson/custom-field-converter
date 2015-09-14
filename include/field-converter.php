@@ -14,6 +14,9 @@
 		private $fields = array();
 		private $related_posts = array();
 		
+		private $clear = array(); // fields to clear
+		private $data = array(); // data to be inserted for post
+		
 		public function __construct($id) {
 			// build this converter
 			$this->id = $id;
@@ -29,8 +32,151 @@
 			if (!in_array($post_type, $this->post_types)) {
 				return;
 			}
-			//echo 'update_post ',$post_id,'<br><br>';
+			//return;
+			//echo 'update_post <pre>'; print_r($this); die;
+			// do get post meta to force wp to cache
+			// get data from fields
+			$this->get_fields_data($post_id, $this->fields);
+			// get data from related posts
+			// clear all post meta from fields
+			// add new post meta
+			
+			//echo '<pre>'; print_r($this->related_posts);
+			
+			$this->get_related_data($post_id, $this->related_posts);
+			
+			
+			echo '<pre>'; print_r($this->clear); print_r($this->data); die;
+			
 		} // end public function update_post
+		
+		private function clear_additional_fields() {
+			
+		} // end private function clear_additional_fields
+		
+		private function add_additional_data() {
+			
+		} // end private function add_additional_data
+		
+		private function get_related_data($post_id, $related_posts) {
+			//echo '<pre>'; print_r($related_posts); die;
+			if (!count($related_posts)) {
+				return;
+			}
+			//echo '@@ <pre>'; print_r($related_posts); die;
+			foreach ($related_posts as $related_post) {
+				//echo '<pre>'; print_r($related_post); echo '</pre>';
+				//echo '-------------------------------------<br>';
+				$hierarchy = $related_post['pointer'];
+				$posts = $this->get_related_posts($post_id, $hierarchy);
+				//echo '&& <pre>'; print_r($posts);
+				if (!count($posts)) {
+					// no related posts found
+					continue;
+				}
+				$current_blog = get_current_blog_id();
+				$site = intval($related_post['site']);
+				//echo $site,', ',$current_blog,'<br><br>';
+				if ($site != 0 && $current_blog != $site) {
+					switch_to_blog(intval($site));
+				}
+				foreach ($posts as $related_post_id) {
+					// if this is not the same site, clear the cache for this post
+					// to avoid possible problems is same id on both sites
+					$this->get_fields_data($related_post_id, $related_post['fields']);
+				}
+				//echo $site,', ',$current_blog,'<br><br>';
+				if ($site != 0 && $current_blog != $site) {
+					restore_current_blog();
+				}
+				//echo '-------------------------------------<br>';
+			} // end foreach related post
+		} // end private function get_related_data
+		
+		private function get_related_posts($post_id, $hierarchy, $row='') {
+			// recursive function
+			//echo '%^& <pre>'; print_r($hierarchy); echo '</pre>';
+			$posts = array();
+			$next = array_shift($hierarchy);
+			$row .= $next['name'];
+			if (!empty($hierarchy)) {
+				$count = intval(get_post_meta($post_id, $row, true));
+				for ($i=0; $i<$count; $i++) {
+					// recurse
+					$posts = array_merge($posts, $this->get_related_posts($post_id, $hierarchy, $row.'_'.$i.'_'));
+				}
+			} else {
+				//echo '<br>',$row,'<br>';
+				//echo $values,'<br>';
+				$values = get_post_meta($post_id, $row, true);
+				//echo $values,'<br><br>';
+				$values = maybe_unserialize($values);
+				if (!empty($values)) {
+					if (!is_array($values)) {
+						$values = array($values);
+					}
+					foreach ($values as $value) {
+						$posts[] = $value;
+					}
+				}
+			}
+			//print_r($posts);
+			return $posts;
+		} // end private function get_related_posts
+		
+		private function get_fields_data($post_id, $fields) {
+			// get data listed in fields from $post_id
+			if (!count($fields)) {
+				return;
+			}
+			clean_post_cache($post_id);
+			$all_meta = get_post_meta($post_id); // force cache
+			foreach ($fields as $field) {
+				//echo '<pre>'; print_r($field); echo '</pre>';
+				$hierarchy = $field['hierarchy'];
+				$meta_key = $field['meta_key'];
+				$empty = $field['empty'];
+				$default = $field['default'];
+				if (!isset($this->data[$meta_key])) {
+					$this->data[$meta_key] = array();
+					$this->clear[] = $meta_key;
+				}
+				$this->get_field_data($post_id, $hierarchy, $meta_key, $empty, $default);
+			} // end foreach $field
+			clean_post_cache($post_id);
+		} // end private function get_field_data
+		
+		private function get_field_data($post_id, $hierarchy, $meta_key, $empty, $default, $row='') {
+			// recursive function
+			//echo get_current_blog_id(),'<br>';
+			$next = array_shift($hierarchy);
+			$row .= $next['name'];
+			//echo $row,'<br>';echo '<pre>'; print_r($hierarchy); echo '<pre>';
+			if (!empty($hierarchy)) {
+				// there are still sub fields
+				$count = intval(get_post_meta($post_id, $row, true));
+				//echo $count,'<br>';
+				for ($i=0; $i<$count; $i++) {
+					// recurse
+					$this->get_field_data($post_id, $hierarchy, $meta_key, $empty, $default, $row.'_'.$i.'_');
+				}
+			} else {
+				// end of hierarch, get and store value(s);
+				$values = get_post_meta($post_id, $row, true);
+				//echo get_current_blog_id(),' => ',$post_id,' => ',$row,' = ',$values,'<br>';
+				$values = maybe_unserialize($values);
+				if (!is_array($values)) {
+					$values = array($values);
+				}
+				foreach ($values as $value) {
+					if (!empty($value) || $empty) {
+						if (!in_array($value, $this->data[$meta_key])) {
+							$this->data[$meta_key][] = $value;
+						}
+					}
+				}
+			} // end if !end or value
+		} // end private function get_field_data
 		
 		private function add_hook() {
 			if (!$this->active) {
@@ -74,6 +220,9 @@
 				$related_post['site'] = intval(get_post_meta($this->id, $row.'site', true));
 			}
 			$related_post['fields'] = $this->build_fields($row);
+			if (!count($related_post['fields'])) {
+				$related_post = array();
+			}
 			return $related_post;
 		} // end private function build_related_post
 		
@@ -92,7 +241,10 @@
 			$repeater = $row.'fields';
 			$count = intval(get_post_meta($this->id, $repeater, true));
 			for ($i=0; $i<$count; $i++) {
-				$fields[] = $this->build_field($repeater.'_'.$i.'_');
+				$field = $this->build_field($repeater.'_'.$i.'_');
+				if (count($field)) {
+					$fields[] = $field;
+				}
 			}
 			return $fields;
 		} // end private function build_fields
@@ -102,7 +254,7 @@
 			$type = $field['type'] = get_post_meta($this->id, $row.'type', true);
 			$hierarchy = array();
 			//echo $type, '<br>';
-			if ($type == 'serialized') {
+			if ($type == 'serialized' || $type == 'single') {
 				$hierarchy[] = array(
 					'type' => $type,
 					'name' => get_post_meta($this->id, $row.'name', true),
@@ -139,12 +291,13 @@
 				$this->active = true;
 			} else {
 				// not active, skip rest of init
-				return;
+				// remove this, need to build converter even if inactive for nuke
+				//return;
 			}
 			$post_types = get_post_meta($this->id, 'post_types', true);
 			if ($post_types === '') {
 				$this->active = false;
-				return;
+				//return; removed for nuke
 			}
 			$post_types = maybe_unserialize($post_types);
 			if (!is_array($post_types)) {
@@ -154,7 +307,7 @@
 			$this->hook = get_post_meta($this->id, 'hook', true);
 			if ($this->hook === '') {
 				$this->active = false;
-				return;
+				//return; removed for nuke
 			}
 			$priority = get_post_meta($this->id, 'priority', true);
 			if ($priority === '') {

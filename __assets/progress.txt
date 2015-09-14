@@ -1,10 +1,9 @@
 
 	To Do
 	
-	* Create converter to convert fields in test posts
-			* Need to retest building converters because of changes made
-	* Convert fields & test
-	* Include filters to allow 3rd party additions to coverted data
+	* Add hook to allow 3rd party add additional fields to clear
+	* Add hook to allow 3rd party add additional data to insert
+	* Clear fields
+	* Insert post meta
 	* Add Check & Repair Feature
 	* Add Nuke Feature
-	* Include filters to allwo 3rd pardy additions field to be nuked

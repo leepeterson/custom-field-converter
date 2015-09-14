@@ -52,9 +52,17 @@
 			return $field;
 		} // end public function acf_load_post_types
 		
-		private function field_converter_fields_fields() {
+		private function field_converter_fields_fields($single=false) {
 			$this->fields_instance++;
 			$prefix = 'field_'.str_pad(strval($this->fields_instance), 2, '00', STR_PAD_LEFT).'acfcfc';
+			$field_type_choices = array();
+			$field_type_default = 'serialized';
+			if ($single) {
+				$field_type_choices['single'] = __('Single Value');
+				$field_type_default = 'single';
+			}
+			$field_type_choices['serialized'] = __('Serialized Array Field');
+			$field_type_choices['nested'] = __('ACF Repeater or Flexible Content Sub Field');
 			$fields = array(
 				array(
 					'key' => $prefix.'00006',
@@ -77,11 +85,8 @@
 							'name' => 'type',
 							'type' => 'radio',
 							'instructions' => '',
-							'choices' => array(
-								'serialized' => __('Serialized Array Field'),
-								'nested' => __('ACF Repeater or Flexible Content Sub Field'),
-							),
-							'default_value' => 'serialized',
+							'choices' => $field_type_choices,
+							'default_value' => $field_type_default,
 							'layout' => 'vertical',
 						),
 						array(
@@ -92,6 +97,13 @@
 							'instructions' => __('Enter the meta_key for this field.'),
 							'required' => 1,
 							'conditional_logic' => array(
+								array(
+									array(
+										'field' => $prefix.'00008',
+										'operator' => '==',
+										'value' => 'single',
+									),
+								),
 								array(
 									array(
 										'field' => $prefix.'00008',
@@ -172,7 +184,7 @@
 							'conditional_logic' => array (
 								array (
 									array (
-										$prefix.'00022',
+										'field' => $prefix.'00022',
 										'operator' => '==',
 										'value' => '1',
 									),
@@ -254,7 +266,7 @@
 		private function field_converter_related_fields() {
 			$subfields = array_merge(
 				$this->related_pointer_fields(),
-				$this->field_converter_fields_fields()
+				$this->field_converter_fields_fields(true)
 			);
 			$fields = array(
 				array(
