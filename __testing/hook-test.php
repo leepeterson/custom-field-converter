@@ -9,7 +9,8 @@
 		} // end public function __construct
 		
 		public function __call($function, $args) {
-			echo $function; die;
+			//echo current_filter(),'<br />';
+			//echo $function; die;
 		} // end public function __call
 		
 	} // end class hook_test
