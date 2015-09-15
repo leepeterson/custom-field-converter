@@ -11,6 +11,7 @@
 	require($converter_file_base.'/acf-field-groups.php');
 	require($converter_file_base.'/field-converters.php');
 	require($converter_file_base.'/field-converter.php');
+	require($converter_file_base.'/admin.php');
 	
 	
 	// for testing only

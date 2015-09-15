@@ -74,6 +74,22 @@
 			
 		} // end public function update_post
 		
+		public function get_active() {
+			return $this->active;
+		} // end public function get_active
+		
+		public function get_nuking() {
+			return array(
+				$this->nuking, $this->last_nuke
+			);
+		} // public function get_nuking
+		
+		public function get_reparing() {
+			return array(
+				$this->reparing, $this->last_repair
+			);
+		} // public function get_reparing
+		
 		private function clear_post_meta($post_id) {
 			if (!count($this->clear)) {
 				return;
