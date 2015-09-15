@@ -17,7 +17,7 @@
 			if ($screen->id != 'edit-acf-field-converter') {
 				return;
 			}
-			echo '<!-- '; print_r($screen); echo ' -->';
+			//echo '<!-- '; print_r($screen); echo ' -->';
 			wp_enqueue_style('field-converter-styles',
 											 dirname(plugin_dir_url(__FILE__)).'/css/field-converter.css');
 			wp_enqueue_script('field-converter-script', 
