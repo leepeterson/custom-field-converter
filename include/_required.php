@@ -12,6 +12,7 @@
 	require($converter_file_base.'/field-converters.php');
 	require($converter_file_base.'/field-converter.php');
 	require($converter_file_base.'/admin.php');
+	require($converter_file_base.'/ajax.php');
 	
 	
 	// for testing only
