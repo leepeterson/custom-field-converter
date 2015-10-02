@@ -83,7 +83,7 @@
 					} else {
 						?>
 							<a href="javascript: blunt_field_converter_check_repair(<?php 
-								echo $post_id; ?>)" class="field-converter button"><?php 
+								echo $post_id; ?>)" class="field-converter button orange"><?php 
 								echo __('CHECK &amp; REPAIR'); ?></a><br />
 							<strong>Last Checked:</strong> <?php echo $repairing[1]; ?>
 						<?php 
@@ -100,7 +100,7 @@
 					} else {
 						?>
 							<a href="javascript: blunt_field_converter_nuke(<?php 
-								echo $post_id; ?>)" class="field-converter button"><?php 
+								echo $post_id; ?>)" class="field-converter button red"><?php 
 									echo __('NUKE'); ?></a><br />
 							<strong>Last Nuked:</strong> <?php echo $nuking[1]; ?>
 						<?php 
