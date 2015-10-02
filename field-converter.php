@@ -32,7 +32,7 @@
 		public function __construct() {
 			register_activation_hook(__FILE__, array($this, 'activate'));
       register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-			add_action('admin_init', array($this, 'init'));
+			add_action('init', array($this, 'init'));
 		}  // end public function __construct
 		
 		public function activate() {

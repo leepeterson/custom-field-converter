@@ -1,5 +1,11 @@
 
 	To Do
 	
+	Currently working on field_converter::nuke
+	
+	need to decide if i'm going to display a message after starting nuke or repair process
+	
+	
 	* Add Check & Repair Feature == Nuke & Rebuild
 	* Add Nuke Feature
+	* Write documentation
