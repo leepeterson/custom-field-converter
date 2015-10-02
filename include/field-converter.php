@@ -237,7 +237,7 @@
 		} // end private function get_related_posts
 		
 		public function start_check_repair() {
-			if ($this->nuking || $this->reparing) {
+			if ($this->nuking || $this->reparing || !$this->active) {
 				return;
 			}
 			// set check & repair in DB
