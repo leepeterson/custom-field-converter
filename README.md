@@ -56,7 +56,22 @@ Example:
 add_filter('my-converter-post-type-args', 'converter_post_type_args');
 function converter_post_type_args($args) {
   $args['public'] = false;
-	return $args;
+  return $args;
 }
 ```
+
+**field-converter/post-type**
+
+This filters allows you to change the post type slug used for the converter post type. The default post type slug is `field-converter`. 
+
+***Please not that it is not recommended that you use this filter and if you do use it that you use it before any converters have been created. If you change the post type slug after creating converters then those converters will be lost unless you make changes in the database to correct them. This also means that if you put this filter in the theme, for example in the theme's functions.php file, that if the theme is changed all field converters will be lost. In other words, if you want to change the slug you should be creating an add on plugin to do it. This filter is supplied only becuase it exists for my own use and I am only telling you about it so that you can change it if it conficts with some other post type slug. You must set a priority higher than 10 to effect a change to the slug. Please do not contact me becuase you've changed the slug and all of your converters have disappeard.***
+
+Example:
+`
+add_filter('field-converter/post-type', 'change_field_converter_post_type($post_type), 20);
+function change_field_converter_post_type($post_type) {
+  $post_type = 'my-custom-post-type-slug';
+  return $post_type;
+}
+`
 

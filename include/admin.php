@@ -13,8 +13,9 @@
 		} // end public function __construct
 		
 		public function enqueue() {
+			$post_type = apply_filters('field-converter/post-type', '');
 			$screen = get_current_screen();
-			if ($screen->id != 'edit-acf-field-converter') {
+			if ($screen->id != 'edit-'.$post_type) {
 				return;
 			}
 			//echo '<!-- '; print_r($screen); echo ' -->';

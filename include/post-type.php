@@ -7,13 +7,13 @@
 	
 	class blunt_field_converter_post_type {
 		
-		private $post_type = 'acf-field-converter';
+		private $post_type = 'field-converter';
 		
 		public function __construct() {
 			add_action('field-converter/init', array($this, 'init'), 1);
 			add_action('field-converter/post-type/label', array($this, 'label'));;
 			add_action('field-converter/post-type/labels', array($this, 'labels'));;
-			add_action('field-converter/post-type', array($this, 'post_type'));
+			add_filter('field-converter/post-type', array($this, 'post_type'));
 		} // end public function __construct
 		
 		public function label($label) {
