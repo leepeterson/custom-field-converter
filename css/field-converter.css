@@ -1,2 +1,33 @@
 /* CSS Document */
 
+.wp-core-ui .button.field-converter.red {
+	color: #FFF;
+	font-weight: bold;
+	background-color: #F00;
+	border-color: #800;
+	box-shadow: 0 0 3px 1px #FFF inset;
+	text-shadow: 0 0 2px #000;
+}
+
+.wp-core-ui .button.field-converter.red:focus, .wp-core-ui .button.field-converter.red:hover {
+	color: #FFF;
+	font-weight: bold;
+	background-color: #C00;
+	border-color: #600;
+}
+
+.wp-core-ui .button.field-converter.orange {
+	color: #FFF;
+	font-weight: bold;
+	background-color: #F80;
+	border-color: #C80;
+	box-shadow: 0 0 3px 1px #FFF inset;
+	text-shadow: 0 0 2px #000;
+}
+
+.wp-core-ui .button.field-converter.orange:focus, .wp-core-ui .button.field-converter.orange:hover {
+	color: #FFF;
+	font-weight: bold;
+	background-color: #C80;
+	border-color: #C50;
+}
