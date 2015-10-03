@@ -37,9 +37,38 @@ This plugin assumes that the user understands how data is stored in different ty
 ##Not Usefull For
 * Repeater Field Matching: If you need to search repeater field rows and match fields in the row (For example, `WHERE repeater_1_number = "10" AND repeater_1_text = "Bob"`) then this plugin will not help you. I do not plan to build in this functionality so please do not ask.
 
+##Check & Repair
+The check and repair feature checks all posts associated with a converter and performs the convert on all the posts. This is usefull if you think there may be problems with the converted data or you have change the converter after adding posts and you need to make the changes effect these previous posts.
+
+##Nuke
+The nuke feature allows you to delete all converted custom fields for all posts that are associated with the converter.
+
 ##Hooks
 
 ###Filters
+
+####field_converter/additional_data
+This filter allows you to build your own additional custom data to be added to each post that is beyond the capabilities of this plugin. For example you could include custom fields from a taxonomy or some other source. Data must be returned in a nested array. See the example.
+
+Example:
+```
+add_filter('field_converter/additional_data', 'my_custom_data_filter');
+function my_custom_data_filter($data) {
+  $data = array(
+    'my_extra_field_1' => array(
+      'value 1',
+      'value 2'
+    ),
+    'my_extra_field_2' => array(
+      'value 1',
+      'value 2',
+      'value 3'
+    )
+  );
+  return $data;
+}
+```
+
 
 ####field-converter/load_field/post_type/args
 
@@ -60,18 +89,63 @@ function converter_post_type_args($args) {
 }
 ```
 
-####field-converter/post-type
 
-This filters allows you to change the post type slug used for the converter post type. The default post type slug is `field-converter`. 
+####field-converter/post-type/capabilities
+This filter allows you to change the capablities for viewing and editing field converters. The default value for all arguments is `update_core` meaning that only an admin user, or the super admin user on multisite, can edit or view field converters. You can change this if you want other types of users to have access. Additional capabilites not listed can also be added if you choose.
 
-***Please note that it is not recommended that you use this filter and if you do use it that you use it before any converters have been created. If you change the post type slug after creating converters then those converters will be lost unless you make changes in the database to correct them. This also means that if you put this filter in the theme, for example in the theme's functions.php file, that if the theme is changed all field converters will be lost. In other words, if you want to change the slug you should be creating an add on plugin to do it. This filter is supplied only becuase it exists for my own use and I am only telling you about it so that you can change it if it conficts with some other post type slug. You must set a priority higher than 10 to effect a change to the slug. Please do not contact me becuase you've changed the slug and all of your converters have disappeard.***
+The default values are:
+```
+$capabilities = array(
+  'edit_post' => 'update_core',
+  'read_post' => 'update_core',
+  'delete_post' => 'update_core',
+  'edit_others_posts' => 'update_core',
+  'delete_posts' => 'update_core',
+  'publish_posts' => 'update_core',
+  'read_private_posts' => 'update_core'
+);
+```
+Example:
+```
+add_filter('field-converter/post-type/capabilities', 'my_converter_capabilities');
+function my_converter_capabilities($capabilities) {
+  // set to standard post capabilities
+	$capabilities = array(
+		'edit_post' => 'edit_posts',
+		'read_post' => 'read',
+		'delete_post' => 'delete_posts',
+		'edit_others_posts' => 'edit_others_posts',
+		'delete_posts' => 'delete_posts',
+		'publish_posts' => 'publish_posts',
+		'read_private_posts' => 'read_private_posts'
+	);
+	return $capabilities;
+}
+```
+
+
+####field-converter/nuke_capibility
+This filter sets the capability required to initiate the **Nuke** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
 
 Example:
 ```
-add_filter('field-converter/post-type', 'change_field_converter_post_type($post_type), 20);
-function change_field_converter_post_type($post_type) {
-  $post_type = 'my-custom-post-type-slug';
-  return $post_type;
+add_filter('field-converter/nuke_capibility', 'my_nuke_capibility', 20);
+my_nuke_capibility($capability) {
+  return 'edit_posts';
 }
+
+```
+
+
+####field-converter/repair_capibility
+This filter sets the capability required to initiate the **Check & Repair** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
+
+Example:
+```
+add_filter('field-converter/repair_capibility', 'my_repair_capibility', 20);
+my_repair_capibility($capability) {
+  return 'edit_posts';
+}
+
 ```
 

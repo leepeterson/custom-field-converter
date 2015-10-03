@@ -387,7 +387,7 @@
 		} // end private function update_post_meta
 		
 		private function clear_additional_fields() {
-			$fields = apply_filters('blunt_field_converter/clear_fields', array());
+			$fields = apply_filters('field_converter/clear_fields', array());
 			if (!is_array($fields) && !count($fields)) {
 				return;
 			}
@@ -399,7 +399,7 @@
 		} // end private function clear_additional_fields
 		
 		private function add_additional_data() {
-			$fields = apply_filters('blunt_field_converter/additional_data', array());
+			$fields = apply_filters('field_converter/additional_data', array());
 			if (!is_array($fields) || !count($fields)) {
 				return;
 			}
