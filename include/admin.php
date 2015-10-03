@@ -47,8 +47,14 @@
 				if (strtolower($column) == __('title')) {
 					$new_columns[$index] = $column;
 					$new_columns['active'] = __('Active');
-					$new_columns['check'] = __('Check &amp; Repair');
-					$new_columns['nuke'] = __('Nuke');
+					$repair_capability = apply_filters('field-converter/repair_capibility', 'update_core');
+					if (current_user_can($repair_capability)) {
+						$new_columns['check'] = __('Check &amp; Repair');
+					}
+					$nuke_capability = apply_filters('field-converter/nuke_capibility', 'update_core');
+					if (current_user_can($nuke_capability)) {
+						$new_columns['nuke'] = __('Nuke');
+					}
 				} else {
 					$new_columns[$index] = $column;
 				}
@@ -72,11 +78,15 @@
 					$repairing = $blunt_field_converters[$post_id]->get_reparing();
 					$nuking = $blunt_field_converters[$post_id]->get_nuking();
 					$active = $blunt_field_converters[$post_id]->get_active();
-					if ($repairing[0]) {
+					$repair_capability = apply_filters('field-converter/repair_capibility', 'update_core');
+					if (!current_user_can($repair_capability)) {
+						return;
+					} elseif ($repairing[0]) {
 						echo '<strong style="color:#800">'.
 									__('**CHECKING &amp; REPAIRING! **').'</strong>';
 					} elseif ($nuking[0]) {
-						echo '&nbsp;';
+						echo '<strong style="color:#800">'.
+									__('Nuke in Progress, Cannot Check &amp; Repair').'</strong>';
 					} elseif (!$active) {
 						echo '<strong style="color:#800">'.
 									__('Not Active, Cannot Check &amp; Repair').'</strong>';
@@ -92,8 +102,12 @@
 				case 'nuke':
 					$repairing = $blunt_field_converters[$post_id]->get_reparing();
 					$nuking = $blunt_field_converters[$post_id]->get_nuking();
-					if ($repairing[0]) {
-						echo '&nbsp;';
+					$nuke_capability = apply_filters('field-converter/nuke_capibility', 'update_core');
+					if (!current_user_can($nuke_capability)) {
+						return;
+					} elseif ($repairing[0]) {
+						echo '<strong style="color:#800">'.
+									__('Check & Repair in Progress, Cannot Nuke').'</strong>';
 					} elseif ($nuking[0]) {
 						echo '<strong style="color:#800">'.
 									__('** NUKING! **').'</strong>';

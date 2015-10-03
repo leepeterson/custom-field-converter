@@ -2,6 +2,7 @@
 
 function blunt_field_converter_ajax_callback(response) {
 	alert(response);
+	location.reload(true);
 } // end function blunt_field_converter_ajax_callback
 
 function blunt_field_converter_nuke(id) {

@@ -57,6 +57,7 @@
 				'publish_posts' => 'update_core',
 				'read_private_posts' => 'update_core'
 			);
+			$capabilities = apply_filters('field-converter/post-type/capabilities', $capabilities);
 			$post_type = apply_filters('field-converter/post-type', '');
       $args = array(
 				'label' => apply_filters('field-converter/post-type/label', ''),

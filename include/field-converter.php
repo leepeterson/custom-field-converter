@@ -80,15 +80,50 @@
 			update_post_meta($this->id, '_blunt_field_converter_last_nuke', date('Y-m-d H:i:s'));
 		} // end public function start_nuke
 		
+		private function cache_field_list() {
+			update_option('_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
+		} // private function cache_field_list
+		
+		private function get_field_list_cache() {
+			$this->clear = get_option('_blunt_field_converter_'.$this->id.'_field_list', array());
+			if (empty($this->clear)) {
+				$this->clear = array();
+				$this->cache_field_list();
+			}
+		} // end private function get_field_list_cache
+		
 		public function nuke() {
+			// build list of fields
+			// get field list cache, if there is nothing in the cache then
+			// no data has ever been converted so bail early
+			if (!count($this->clear)) {
+				// nothing to nuke
+				return;
+			}
 			// get list of posts
 			$this->get_post_list();
-			// build list of fields
-			// ***************************************************
-			
-			// not done
-			die;
-			
+			if (!count($this->posts)) {
+				// noting to clear
+				return;
+			}
+			// delete all data
+			global $wpdb;
+			$table = $wpdb->get_blog_prefix().'postmeta';
+			$clear = $wpdb->_escape($this->clear);
+			foreach ($clear as $index => $value) {
+				$clear[$index] = '"'.$value.'"';
+			}
+			$posts = $wpdb->_escape($this->posts);
+			foreach ($posts as $index => $value) {
+				$posts[$index] = '"'.$value.'"';
+			}
+			$query = 'DELETE FROM '.$table.'
+			 					WHERE post_id IN ('.implode(', ', $posts).') 
+							 		AND meta_key IN ('.implode(', ', $clear).')';
+			$success = $wpdb->query($query);
+			// delete field list cache
+			$this->clear = array();
+			$this->cache_field_list();
 		} // end public function nuke
 				
 		public function update_post($post_id) {
@@ -241,7 +276,7 @@
 				return;
 			}
 			// set check & repair in DB
-			$this->nuking = true;
+			$this->reparing = true;
 			update_post_meta($this->id, '_blunt_field_converter_repairing', true);
 			// return and continue running
 			$this->ajax_return_json('check_repair');
@@ -251,7 +286,7 @@
 			$this->check_repair();
 			// unset check & repair in DB
 			update_post_meta($this->id, '_blunt_field_converter_repairing', false);
-			$this->nuking = false;
+			$this->reparing = false;
 			update_post_meta($this->id, '_blunt_field_converter_last_repair', date('Y-m-d H:i:s'));
 		} // end public function start_check_repair
 		
@@ -301,16 +336,17 @@
 			if (!count($this->clear)) {
 				return;
 			}
+			$this->cache_field_list();
 			global $wpdb;
 			$post_id = $wpdb->_escape($post_id);
-			$this->clear = $wpdb->_escape($this->clear);
 			$table = $wpdb->get_blog_prefix().'postmeta';
-			foreach ($this->clear as $index => $value) {
-				$this->clear[$index] = '"'.$value.'"';
+			$clear = $wpdb->_escape($this->clear);
+			foreach ($clear as $index => $value) {
+				$clear[$index] = '"'.$value.'"';
 			}
 			$query = 'DELETE FROM '.$table.'
 			 					WHERE post_id = "'.$post_id.'" 
-							 		AND meta_key IN ('.implode(', ', $this->clear).')';
+							 		AND meta_key IN ('.implode(', ', $clear).')';
 			//echo $query.'<br><br>';
 			//echo $query,'<br /><br />';
 			$success = $wpdb->query($query);
@@ -528,7 +564,8 @@
 				$this->active = false;
 			}
 			
-			$reparing = intval(get_post_meta($this->id, '_blunt_field_converter_repairing', true));
+			$reparing = get_post_meta($this->id, '_blunt_field_converter_repairing', true);
+			$reparing = maybe_unserialize($reparing);
 			if ($reparing) {
 				$this->reparing = true;
 			}
@@ -537,7 +574,8 @@
 				$this->last_repair = $last_repair;
 			}
 			
-			$nuking = intval(get_post_meta($this->id, '_blunt_field_converter_nuking', true));
+			$nuking = get_post_meta($this->id, '_blunt_field_converter_nuking', true);
+			$nuking = maybe_unserialize($nuking);
 			if ($nuking) {
 				$this->nuking = true;
 			}
@@ -545,6 +583,7 @@
 			if ($last_nuke) {
 				$this->last_nuke = $last_nuke;
 			}
+			$this->get_field_list_cache();
 		} // end private function build_converter
 		
 	} // end class blunt_field_converter

@@ -13,7 +13,8 @@
 		} // end public function __construct
 		
 		public function nuke() {
-			if (!current_user_can('update_core') || !isset($_POST['post_id'])) {
+			$nuke_capability = apply_filters('field-converter/nuke_capibility', 'update_core');
+			if (!current_user_can($nuke_capability) || !isset($_POST['post_id'])) {
 				$this->return_json(0, 'nuke', false);
 			}
 			global $blunt_field_converters;
@@ -24,7 +25,8 @@
 		} // end public function nuke
 		
 		public function check_repair() {
-			if (!current_user_can('update_core') || !isset($_POST['post_id'])) {
+			$repair_capability = apply_filters('field-converter/repair_capibility', 'update_core');
+			if (!current_user_can($repair_capability) || !isset($_POST['post_id'])) {
 				$this->return_json(0, 'check_repair', false);
 			}
 			global $blunt_field_converters;
