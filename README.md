@@ -41,7 +41,7 @@ This plugin assumes that the user understands how data is stored in different ty
 
 ###Filters
 
-**field-converter/load_field/post_type/args**
+####field-converter/load_field/post_type/args
 
 This filter allows you do allter the post types loaded into the post type selection field of the field converter settings. These are the arguments used to get the list of post types and it conforms to the format of the wordpress function [get_post_types()](https://codex.wordpress.org/Function_Reference/get_post_types)
 
@@ -60,7 +60,7 @@ function converter_post_type_args($args) {
 }
 ```
 
-**field-converter/post-type**
+####field-converter/post-type
 
 This filters allows you to change the post type slug used for the converter post type. The default post type slug is `field-converter`. 
 
