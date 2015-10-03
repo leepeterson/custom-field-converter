@@ -45,4 +45,18 @@ This plugin assumes that the user understands how data is stored in different ty
 
 This filter allows you do allter the post types loaded into the post type selection field of the field converter settings. These are the arguments used to get the list of post types and it conforms to the format of the wordpress function [get_post_types()](https://codex.wordpress.org/Function_Reference/get_post_types)
 
+The default values of $args:
+```
+$args = array(
+  'public' => 'true'
+);
+```
+Example:
+```
+add_filter('my-converter-post-type-args', 'converter_post_type_args');
+function converter_post_type_args($args) {
+  $args['public'] = false;
+	return $args;
+}
+```
 
