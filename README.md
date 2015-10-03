@@ -35,7 +35,7 @@ This plugin assumes that the user understands how data is stored in different ty
 * Copying custom fields from related posts to allow searching of posts by related content
 
 ##Not Usefull For
-* Repeater Field Matching: If you need to search repeater field rows and match fields in the row (For example, `WHERE repeater_1_number = "10" AND repeater_1_text = "Bob"`) then this plugin will not help you. I do not plan to build in this functionality so please do not ask.
+* Repeater Field Matching: If you need to search repeater field rows and match fields in the row (For example, `WHERE repeater_1_number = "10" AND repeater_1_text = "Bob"`) then this plugin will not help you. I do not plan to build in this functionality so please do not ask. This may be possible but you'll need to build it yourself for your own particlar needs. I have provided a filter that will allow you to add additional fields, see filters below.
 
 ##Check & Repair
 The check and repair feature checks all posts associated with a converter and performs the convert on all the posts. This is usefull if you think there may be problems with the converted data or you have change the converter after adding posts and you need to make the changes effect these previous posts.
@@ -124,19 +124,6 @@ function my_converter_capabilities($capabilities) {
 ```
 
 
-####field-converter/nuke_capibility
-This filter sets the capability required to initiate the **Nuke** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
-
-Example:
-```
-add_filter('field-converter/nuke_capibility', 'my_nuke_capibility', 20);
-my_nuke_capibility($capability) {
-  return 'edit_posts';
-}
-
-```
-
-
 ####field-converter/repair_capibility
 This filter sets the capability required to initiate the **Check & Repair** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
 
@@ -144,6 +131,19 @@ Example:
 ```
 add_filter('field-converter/repair_capibility', 'my_repair_capibility', 20);
 my_repair_capibility($capability) {
+  return 'edit_posts';
+}
+
+```
+
+
+####field-converter/nuke_capibility
+This filter sets the capability required to initiate the **Nuke** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
+
+Example:
+```
+add_filter('field-converter/nuke_capibility', 'my_nuke_capibility', 20);
+my_nuke_capibility($capability) {
   return 'edit_posts';
 }
 
