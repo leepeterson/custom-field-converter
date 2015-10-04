@@ -4,7 +4,6 @@
 	if (!defined('WPINC')) {die;}
 	
 	$converter_file_base = dirname(__FILE__);
-	//require(dirname(__FILE__).'/include/hook-test.php');
 	require($converter_file_base.'/options-page.php');
 	require($converter_file_base.'/post-type.php');
 	require($converter_file_base.'/settings.php');
@@ -16,6 +15,6 @@
 	
 	
 	// for testing only
-	require(dirname(dirname(__FILE__)).'/__testing/functions.php');
+	//require(dirname(dirname(__FILE__)).'/__testing/functions.php');
 	
 ?>

@@ -1,8 +1,18 @@
 // JavaScript Document
 
 function blunt_field_converter_ajax_callback(response) {
-	alert(response);
-	location.reload(true);
+	//alert(response);
+	var obj = jQuery.parseJSON(response);
+	var type = 'Check & Repair';
+	if (obj.type == 'nuke') {
+		type = 'Nuke';
+	}
+	if (!obj.success) {
+		alert('Failed to Initiate '+type+' on '+obj.name);
+	} else {
+		alert(type+' Initiated on '+obj.name);
+		location.reload(true);
+	}
 } // end function blunt_field_converter_ajax_callback
 
 function blunt_field_converter_nuke(id) {

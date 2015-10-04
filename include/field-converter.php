@@ -39,7 +39,7 @@
 		private function ajax_return_json($type) {
 			// return message, prevent abort and continue
 			global $blunt_field_converters;
-			$name = $blunt_field_converters[$id]->get_name();
+			$name = $this->name;
 			$data = array(
 				'success' => 'true',
 				'type' => $type,
@@ -49,17 +49,20 @@
 			$json = json_encode($data);
 			
 			ob_end_clean();
-			header('Connection: close');
+			apache_setenv('no-gzip', 1);
+			ini_set('zlib.output_compression', 0);
 			set_time_limit(0);
 			ignore_user_abort(true);
 			ob_start();
 			
 			echo $json;
 			
+			header('Connection: close');
 			$size = ob_get_length();
 			header('Content-Length: '.$size);
 			ob_end_flush();
 			flush();
+			echo 'I should never see this';
 			ob_start();
 		} // end private function ajax_return_json
 		
@@ -78,30 +81,68 @@
 			update_post_meta($this->id, '_blunt_field_converter_nuking', false);
 			$this->nuking = false;
 			update_post_meta($this->id, '_blunt_field_converter_last_nuke', date('Y-m-d H:i:s'));
+			exit;
 		} // end public function start_nuke
 		
 		private function cache_field_list() {
-			update_option('_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
+			//update_option('_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
+			//echo '_blunt_field_converter_'.$this->id.'_field_list<br>';
+			//echo 'GET OPTION'; print_r(get_option('_blunt_field_converter_'.$this->id.'_field_list', array()));
+			update_post_meta($this->id, '_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
 		} // private function cache_field_list
 		
 		private function get_field_list_cache() {
-			$this->clear = get_option('_blunt_field_converter_'.$this->id.'_field_list', array());
-			if (empty($this->clear)) {
+			// '_blunt_field_converter_'.$this->id.'_field_list', $this->clear
+			//$this->clear = get_option('_blunt_field_converter_'.$this->id.'_field_list', array());
+			$this->clear = maybe_unserialize(
+				get_post_meta(
+					$this->id, '_blunt_field_converter_'.$this->id.'_field_list', true
+				)
+			);
+			if (!is_array($this->clear)) {
 				$this->clear = array();
-				$this->cache_field_list();
 			}
-		} // end private function get_field_list_cache
+		} // end private function get_field_list_cacheget_related_posts
+		
+		public function start_check_repair() {
+			if ($this->nuking || $this->reparing || !$this->active) {
+				return;
+			}
+			// set check & repair in DB
+			$this->reparing = true;
+			update_post_meta($this->id, '_blunt_field_converter_repairing', true);
+			// return and continue running
+			$this->ajax_return_json('check_repair');
+			// call nuke
+			$this->nuke();
+			// built post list just in case nuke returned before doing it
+			$this->get_post_list();
+			if (!count($this->posts)) {
+				// noting to clear
+				return;
+			}
+			//print_r($this->posts); exit;
+			// call check_repair
+			$this->check_repair();
+			// unset check & repair in DB
+			update_post_meta($this->id, '_blunt_field_converter_repairing', false);
+			$this->reparing = false;
+			update_post_meta($this->id, '_blunt_field_converter_last_repair', date('Y-m-d H:i:s'));
+			exit;
+		} // end public function start_check_repair
 		
 		public function nuke() {
 			// build list of fields
 			// get field list cache, if there is nothing in the cache then
 			// no data has ever been converted so bail early
+			//print_r($this->clear); return;
 			if (!count($this->clear)) {
 				// nothing to nuke
 				return;
 			}
 			// get list of posts
 			$this->get_post_list();
+			//print_r($this->posts); return;
 			if (!count($this->posts)) {
 				// noting to clear
 				return;
@@ -110,6 +151,7 @@
 			global $wpdb;
 			$table = $wpdb->get_blog_prefix().'postmeta';
 			$clear = $wpdb->_escape($this->clear);
+			//print_r($clear);
 			foreach ($clear as $index => $value) {
 				$clear[$index] = '"'.$value.'"';
 			}
@@ -269,26 +311,7 @@
 			}
 			//print_r($posts);
 			return $posts;
-		} // end private function get_related_posts
-		
-		public function start_check_repair() {
-			if ($this->nuking || $this->reparing || !$this->active) {
-				return;
-			}
-			// set check & repair in DB
-			$this->reparing = true;
-			update_post_meta($this->id, '_blunt_field_converter_repairing', true);
-			// return and continue running
-			$this->ajax_return_json('check_repair');
-			// call nuke
-			$this->nuke();
-			// call check_repair
-			$this->check_repair();
-			// unset check & repair in DB
-			update_post_meta($this->id, '_blunt_field_converter_repairing', false);
-			$this->reparing = false;
-			update_post_meta($this->id, '_blunt_field_converter_last_repair', date('Y-m-d H:i:s'));
-		} // end public function start_check_repair
+		} // end private function 
 		
 		public function check_repair() {
 			foreach ($this->posts as $post_id) {
@@ -333,10 +356,11 @@
 		private function clear_post_meta($post_id) {
 			// delete all data from the new fields before inserting new data
 			// faster than testing each value to see if it exists first
+			$this->cache_field_list();
+			//print_r($this->clear);
 			if (!count($this->clear)) {
 				return;
 			}
-			$this->cache_field_list();
 			global $wpdb;
 			$post_id = $wpdb->_escape($post_id);
 			$table = $wpdb->get_blog_prefix().'postmeta';
@@ -566,7 +590,7 @@
 			
 			$reparing = get_post_meta($this->id, '_blunt_field_converter_repairing', true);
 			$reparing = maybe_unserialize($reparing);
-			if ($reparing) {
+			if ($reparing && $reparing !== '0') {
 				$this->reparing = true;
 			}
 			$last_repair = get_post_meta($this->id, '_blunt_field_converter_last_repair', true);
@@ -576,7 +600,7 @@
 			
 			$nuking = get_post_meta($this->id, '_blunt_field_converter_nuking', true);
 			$nuking = maybe_unserialize($nuking);
-			if ($nuking) {
+			if ($nuking && $nuking !== '0') {
 				$this->nuking = true;
 			}
 			$last_nuke = get_post_meta($this->id, '_blunt_field_converter_last_nuke', true);
