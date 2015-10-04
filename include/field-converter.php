@@ -160,8 +160,8 @@
 				$posts[$index] = '"'.$value.'"';
 			}
 			$query = 'DELETE FROM '.$table.'
-			 					WHERE post_id IN ('.implode(', ', $posts).') 
-							 		AND meta_key IN ('.implode(', ', $clear).')';
+								WHERE post_id IN ('.implode(', ', $posts).')
+									AND meta_key IN ('.implode(', ', $clear).')';
 			$success = $wpdb->query($query);
 			// delete field list cache
 			$this->clear = array();
@@ -311,7 +311,7 @@
 			}
 			//print_r($posts);
 			return $posts;
-		} // end private function 
+		} // end private function
 		
 		public function check_repair() {
 			foreach ($this->posts as $post_id) {
@@ -369,8 +369,8 @@
 				$clear[$index] = '"'.$value.'"';
 			}
 			$query = 'DELETE FROM '.$table.'
-			 					WHERE post_id = "'.$post_id.'" 
-							 		AND meta_key IN ('.implode(', ', $clear).')';
+								WHERE post_id = "'.$post_id.'"
+									AND meta_key IN ('.implode(', ', $clear).')';
 			//echo $query.'<br><br>';
 			//echo $query,'<br /><br />';
 			$success = $wpdb->query($query);

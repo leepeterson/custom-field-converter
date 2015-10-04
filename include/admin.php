@@ -24,13 +24,13 @@
 				dirname(plugin_dir_url(__FILE__)).'/css/field-converter.css'
 			);
 			wp_enqueue_script(
-				'field-converter-script', 
-			 	dirname(plugin_dir_url(__FILE__)).'/js/field-converter.js',
-				array('jquery'), 
-				'', 
+				'field-converter-script',
+				dirname(plugin_dir_url(__FILE__)).'/js/field-converter.js',
+				array('jquery'),
+				'',
 				true);
 			wp_localize_script(
-				'field-converter-script', 
+				'field-converter-script',
 				'blunt_converter_ajax_object',
 				array('ajax_url' => admin_url('admin-ajax.php'))
 			);

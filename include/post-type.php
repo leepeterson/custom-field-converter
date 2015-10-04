@@ -70,7 +70,7 @@
 				'map_meta_cap' => true,
 				'hierarchical' => false,
 				'rewrite' => array(
-					'slug' => $post_type, 
+					'slug' => $post_type,
 					'with_front' => true,
 					'pages' => false,
 				),
@@ -78,15 +78,15 @@
 				'exclude_from_search' => true,
 				'menu_position' => 100,
 				'supports' => array(
-					'title', 
-					'custom-fields', 
+					'title',
+					'custom-fields',
 					'revisions'
 				),
 				'labels' => apply_filters('field-converter/post-type/labels', array()),
 				'capabilities' => $capabilities,
 			);
 			register_post_type($post_type, $args);
-		} // end public function init 
+		} // end public function init
 		
 	} // end class blunt_field_converter_post_type
 	
