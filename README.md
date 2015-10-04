@@ -3,7 +3,7 @@
 This plugin requires that Advanced Custom Fields 5 Pro (ACF) in installed. This plugin will not provide any
 funtionality if ACF is not installed.
 
-***This plugin needs testing. Please submit bugs, problems, comment & questions [here](https://github.com/Hube2/custom-field-converter/issues).***
+***Please submit bugs, problems, comments & questions [here](https://github.com/Hube2/custom-field-converter/issues).***
 
 Convert custom fields stored in formats other that standard WP postmeta DB storage format into standard WP
 storage format.
