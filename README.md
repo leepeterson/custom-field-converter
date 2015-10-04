@@ -1,4 +1,4 @@
-# Custom Field Converter
+# Custom Field Converter for ACF
 
 This plugin requires that Advanced Custom Fields 5 Pro (ACF). This plugin will not provide any
 funtionality if ACF is not installed.

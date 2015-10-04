@@ -86,7 +86,7 @@
 				'capabilities' => $capabilities,
 			);
 			register_post_type($post_type, $args);
-		} // end public function init
+		} // end public function init 
 		
 	} // end class blunt_field_converter_post_type
 	
