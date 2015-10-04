@@ -1,6 +1,6 @@
 # Custom Field Converter
 
-This plugin requires that Advanced Custom Fields 5 Pro (ACF) in installed. This plugin will not provide any
+This plugin requires that Advanced Custom Fields 5 Pro (ACF). This plugin will not provide any
 funtionality if ACF is not installed.
 
 ***Please submit bugs, problems, comments & questions [here](https://github.com/Hube2/custom-field-converter/issues).***
@@ -23,25 +23,34 @@ data using a standard `WP_Query()`.
 The standard storage method that WP uses to store multiple values for a single `meta_key` is to use multiple
 DB rows with the same `meta_key` and a different value for each.
 
-This plugin will convert data of these fields to standard storage format using a differnt `meta_key` to make 
-the values in them easier to query.
+This plugin will convert data in non standard fields to standard storage format into a differnt `meta_key` 
+to make the values in them easier to query. This requires using the new meta key that you assign to these
+values.
 
 This plugin assumes that the user understands how data is stored in different types of custom fields.
 
 ##Usefull For
 * Converting multiselect to standard WP storage
 * Converting checkbox fields to standard WP storage
-* Converting repeater fields to standard WP storage
-* Copying custom fields from related posts to allow searching of posts by related content
+* Converting other fields stored as serialized arrays into standard WP storage format
+* Converting ACF repeater fields to standard WP storage
+* Copying custom fields from related posts to allow easier searching of posts by related content
 
 ##Not Usefull For
-* Repeater Field Matching: If you need to search repeater field rows and match fields in the row (For example, `WHERE repeater_1_number = "10" AND repeater_1_text = "Bob"`) then this plugin will not help you. I do not plan to build in this functionality so please do not ask. This may be possible but you'll need to build it yourself for your own particlar needs. I have provided a filter that will allow you to add additional fields, see filters below.
+* Repeater Field Matching: If you need to search repeater field rows and match fields in the row 
+(For example, `WHERE repeater_1_number = "10" AND repeater_1_text = "Bob"`) then this plugin will 
+not help you. I do not plan to build in this functionality so please do not ask. This may be 
+possible but you'll need to build it yourself for your own particlar needs. I have provided a 
+filter that will allow you to add additional fields, see filters below.
 
 ##Check & Repair
-The check and repair feature checks all posts associated with a converter and performs the convert on all the posts. This is usefull if you think there may be problems with the converted data or you have change the converter after adding posts and you need to make the changes effect these previous posts.
+The check and repair feature checks all posts associated with a converter and performs the convert 
+on all the posts. This is usefull if you think there may be problems with the converted data or you 
+have change the converter after adding posts and you need to make the changes effect these previous posts.
 
 ##Nuke
-The nuke feature allows you to delete all converted custom fields for all posts that are associated with the converter.
+The nuke feature allows you to delete all converted custom fields for all posts that are 
+associated with the converter.
 
 ##Hooks
 
