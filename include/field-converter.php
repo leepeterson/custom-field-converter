@@ -47,22 +47,18 @@
 				'name' => $this->name,
 			);
 			$json = json_encode($data);
-			
 			ob_end_clean();
 			apache_setenv('no-gzip', 1);
 			ini_set('zlib.output_compression', 0);
 			set_time_limit(0);
 			ignore_user_abort(true);
 			ob_start();
-			
 			echo $json;
-			
 			header('Connection: close');
 			$size = ob_get_length();
 			header('Content-Length: '.$size);
 			ob_end_flush();
 			flush();
-			echo 'I should never see this';
 			ob_start();
 		} // end private function ajax_return_json
 		
@@ -85,9 +81,6 @@
 		} // end public function start_nuke
 		
 		private function cache_field_list() {
-			//update_option('_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
-			//echo '_blunt_field_converter_'.$this->id.'_field_list<br>';
-			//echo 'GET OPTION'; print_r(get_option('_blunt_field_converter_'.$this->id.'_field_list', array()));
 			update_post_meta($this->id, '_blunt_field_converter_'.$this->id.'_field_list', $this->clear);
 		} // private function cache_field_list
 		
@@ -121,7 +114,6 @@
 				// noting to clear
 				return;
 			}
-			//print_r($this->posts); exit;
 			// call check_repair
 			$this->check_repair();
 			// unset check & repair in DB
@@ -135,14 +127,12 @@
 			// build list of fields
 			// get field list cache, if there is nothing in the cache then
 			// no data has ever been converted so bail early
-			//print_r($this->clear); return;
 			if (!count($this->clear)) {
 				// nothing to nuke
 				return;
 			}
 			// get list of posts
 			$this->get_post_list();
-			//print_r($this->posts); return;
 			if (!count($this->posts)) {
 				// noting to clear
 				return;
@@ -151,7 +141,6 @@
 			global $wpdb;
 			$table = $wpdb->get_blog_prefix().'postmeta';
 			$clear = $wpdb->_escape($this->clear);
-			//print_r($clear);
 			foreach ($clear as $index => $value) {
 				$clear[$index] = '"'.$value.'"';
 			}
@@ -173,24 +162,14 @@
 			if (!in_array($post_type, $this->post_types)) {
 				return;
 			}
-			//return;
-			//echo 'update_post <pre>'; print_r($this); die;
-			// do get post meta to force wp to cache
 			// get data from fields
 			$this->get_fields_data($post_id, $this->fields);
 			// get data from related posts
 			$this->get_related_data($post_id, $this->related_posts);
-			
-			
-			//echo '<pre>'; print_r($this->clear); print_r($this->data); die;
-			
-			
 			// clear all post meta from fields
 			$this->clear_post_meta($post_id);
 			// add new post meta
 			$this->update_post_meta($post_id);
-			//echo '<pre>'; print_r($this->related_posts);
-			
 		} // end public function update_post
 		
 		private function get_fields_data($post_id, $fields) {
@@ -201,7 +180,6 @@
 			clean_post_cache($post_id);
 			$all_meta = get_post_meta($post_id); // force cache
 			foreach ($fields as $field) {
-				//echo '<pre>'; print_r($field); echo '</pre>';
 				$hierarchy = $field['hierarchy'];
 				$meta_key = $field['meta_key'];
 				$empty = $field['empty'];
@@ -217,14 +195,11 @@
 		
 		private function get_field_data($post_id, $hierarchy, $meta_key, $empty, $default, $row='') {
 			// recursive function
-			//echo get_current_blog_id(),'<br>';
 			$next = array_shift($hierarchy);
 			$row .= $next['name'];
-			//echo $row,'<br>';echo '<pre>'; print_r($hierarchy); echo '<pre>';
 			if (!empty($hierarchy)) {
 				// there are still sub fields
 				$count = intval(get_post_meta($post_id, $row, true));
-				//echo $count,'<br>';
 				for ($i=0; $i<$count; $i++) {
 					// recurse
 					$this->get_field_data($post_id, $hierarchy, $meta_key, $empty, $default, $row.'_'.$i.'_');
@@ -232,7 +207,6 @@
 			} else {
 				// end of hierarch, get and store value(s);
 				$values = get_post_meta($post_id, $row, true);
-				//echo get_current_blog_id(),' => ',$post_id,' => ',$row,' = ',$values,'<br>';
 				$values = maybe_unserialize($values);
 				if (!is_array($values)) {
 					$values = array($values);
@@ -248,43 +222,32 @@
 		} // end private function get_field_data
 		
 		private function get_related_data($post_id, $related_posts) {
-			//echo '<pre>'; print_r($related_posts); die;
 			if (!count($related_posts)) {
 				return;
 			}
-			//echo '@@ <pre>'; print_r($related_posts); die;
 			foreach ($related_posts as $related_post) {
-				//echo '<pre>'; print_r($related_post); echo '</pre>';
-				//echo '-------------------------------------<br>';
 				$hierarchy = $related_post['pointer'];
 				$posts = $this->get_related_posts($post_id, $hierarchy);
-				//echo '&& <pre>'; print_r($posts);
 				if (!count($posts)) {
 					// no related posts found
 					continue;
 				}
 				$current_blog = get_current_blog_id();
 				$site = intval($related_post['site']);
-				//echo $site,', ',$current_blog,'<br><br>';
 				if ($site != 0 && $current_blog != $site) {
 					switch_to_blog(intval($site));
 				}
 				foreach ($posts as $related_post_id) {
-					// if this is not the same site, clear the cache for this post
-					// to avoid possible problems is same id on both sites
 					$this->get_fields_data($related_post_id, $related_post['fields']);
 				}
-				//echo $site,', ',$current_blog,'<br><br>';
 				if ($site != 0 && $current_blog != $site) {
 					restore_current_blog();
 				}
-				//echo '-------------------------------------<br>';
 			} // end foreach related post
 		} // end private function get_related_data
 		
 		private function get_related_posts($post_id, $hierarchy, $row='') {
 			// recursive function
-			//echo '%^& <pre>'; print_r($hierarchy); echo '</pre>';
 			$posts = array();
 			$next = array_shift($hierarchy);
 			$row .= $next['name'];
@@ -295,10 +258,7 @@
 					$posts = array_merge($posts, $this->get_related_posts($post_id, $hierarchy, $row.'_'.$i.'_'));
 				}
 			} else {
-				//echo '<br>',$row,'<br>';
-				//echo $values,'<br>';
 				$values = get_post_meta($post_id, $row, true);
-				//echo $values,'<br><br>';
 				$values = maybe_unserialize($values);
 				if (!empty($values)) {
 					if (!is_array($values)) {
@@ -309,7 +269,6 @@
 					}
 				}
 			}
-			//print_r($posts);
 			return $posts;
 		} // end private function
 		
@@ -357,7 +316,6 @@
 			// delete all data from the new fields before inserting new data
 			// faster than testing each value to see if it exists first
 			$this->cache_field_list();
-			//print_r($this->clear);
 			if (!count($this->clear)) {
 				return;
 			}
@@ -371,15 +329,7 @@
 			$query = 'DELETE FROM '.$table.'
 								WHERE post_id = "'.$post_id.'"
 									AND meta_key IN ('.implode(', ', $clear).')';
-			//echo $query.'<br><br>';
-			//echo $query,'<br /><br />';
-			$success = $wpdb->query($query);
-			/*
-			if ($success === false) {
-				die('delete failed');
-			}
-			echo $success.'<br>';
-			*/
+			$wpdb->query($query);
 		} // end private function clear_post_meta
 		
 		private function update_post_meta($post_id) {
@@ -400,14 +350,7 @@
 				}
 			}
 			$query .= implode(','."\r\n", $values);
-			//echo $query,'<br /><br />';
-			$success = $wpdb->query($query);
-			/*
-			if ($success === false) {
-				die('insert failed');
-			}
-			echo $success.'<br>';
-			*/
+			$wpdb->query($query);
 		} // end private function update_post_meta
 		
 		private function clear_additional_fields() {
@@ -449,7 +392,6 @@
 			if (!$this->active) {
 				return;
 			}
-			//echo 'add hook ',$this->id,'<br><br>';
 			add_action($this->hook, array($this, 'update_post'), $this->priority);
 		} // end private function add_hook
 		
@@ -472,13 +414,11 @@
 		private function build_related_post($row) {
 			$related_post = array();
 			$repeater = $row.'pointer';
-			//echo $repeater,'<br>';
 			$count = intval(get_post_meta($this->id, $repeater, true));
 			if (!count($repeater)) {
 				return;
 			}
 			$related_post['pointer'] = array();
-			//echo ($count),'<br>';
 			for ($i=0; $i<$count; $i++) {
 				$related_post['pointer'][] = $this->build_pointer_field($repeater.'_'.$i.'_');
 			}
@@ -494,12 +434,10 @@
 		} // end private function build_related_post
 		
 		private function build_pointer_field($row) {
-			//echo $row,'<br>';
 			$field = array(
 				'type' => get_post_meta($this->id, $row.'type', true),
 				'name' => get_post_meta($this->id, $row.'name', true)
 			);
-			//print_r($field); echo '<br>';
 			return $field;
 		} // end private function build_pointer_field
 		
@@ -520,7 +458,6 @@
 			$field = array();
 			$type = $field['type'] = get_post_meta($this->id, $row.'type', true);
 			$hierarchy = array();
-			//echo $type, '<br>';
 			if ($type == 'serialized' || $type == 'single') {
 				$hierarchy[] = array(
 					'type' => $type,
@@ -528,11 +465,8 @@
 				);
 			} else {
 				// nested field
-				//echo 'here <br>';
 				$repeater = $row.'hierarchy';
-				//echo $repeater,'<br>';
 				$count = intval(get_post_meta($this->id, $repeater, true));
-				//echo $count,'<br>';
 				for ($i=0; $i<$count; $i++) {
 					$hierarchy[] = array(
 						'type' => get_post_meta($this->id, $repeater.'_'.$i.'_type', true),
@@ -556,15 +490,10 @@
 			$active = get_post_meta($this->id, 'active', true);
 			if ($active === '' || $active == 1) {
 				$this->active = true;
-			} else {
-				// not active, skip rest of init
-				// remove this, need to build converter even if inactive for nuke
-				//return;
 			}
 			$post_types = get_post_meta($this->id, 'post_types', true);
 			if ($post_types === '') {
 				$this->active = false;
-				//return; removed for nuke
 			}
 			$post_types = maybe_unserialize($post_types);
 			if (!is_array($post_types)) {
@@ -574,7 +503,6 @@
 			$this->hook = get_post_meta($this->id, 'hook', true);
 			if ($this->hook === '') {
 				$this->active = false;
-				//return; removed for nuke
 			}
 			$priority = get_post_meta($this->id, 'priority', true);
 			if ($priority === '') {
@@ -587,7 +515,6 @@
 			if (!count($this->fields) && !count($this->related_posts)) {
 				$this->active = false;
 			}
-			
 			$reparing = get_post_meta($this->id, '_blunt_field_converter_repairing', true);
 			$reparing = maybe_unserialize($reparing);
 			if ($reparing && $reparing !== '0') {
@@ -597,7 +524,6 @@
 			if ($last_repair) {
 				$this->last_repair = $last_repair;
 			}
-			
 			$nuking = get_post_meta($this->id, '_blunt_field_converter_nuking', true);
 			$nuking = maybe_unserialize($nuking);
 			if ($nuking && $nuking !== '0') {

@@ -18,13 +18,11 @@
 		public function acf_load_sites_field($field) {
 			$choices = array();
 			$blog_id = get_current_blog_id();
-			$sites = wp_get_sites();
-			//echo '<pre>'; print_r($sites); echo '</pre>';
+			$sites = wp_get_sites();;
 			$field['default_value'] = $blog_id;
 			foreach ($sites as $site) {
 				$domain = $site['domain'];
 				$name = get_blog_option($site['blog_id'], 'blogname', '');
-				//echo $name;
 				$choices[$site['blog_id']] = trim($name.' ('.$domain.')');
 			}
 			$field['choices'] = $choices;
@@ -33,7 +31,6 @@
 		
 		public function acf_include_fields() {
 			// register field groups
-			//echo 'here'; die;
 			$this->converter_field_group();
 			$this->options_field_group();
 		} // end public function acf_include_fields
@@ -362,7 +359,6 @@
 				$this->field_converter_fields_fields(),
 				$this->field_converter_related_fields()
 			);
-			//echo '<pre>'; print_r($fields); die;
 			$field_group = array(
 				'key' => 'group_01acfcfc00001',
 				'title' => __('Field Converter Settings'),

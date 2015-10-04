@@ -19,7 +19,6 @@
 			'orderby' => 'title'
 		);
 		$query = new WP_Query($args);
-		//echo '<pre>'; print_r($query->posts); echo '</pre>';
 		if ($query->have_posts()) {
 			global $post;
 			while($query->have_posts()) {

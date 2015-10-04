@@ -18,7 +18,6 @@
 			if ($screen->id != 'edit-'.$post_type) {
 				return;
 			}
-			//echo '<!-- '; print_r($screen); echo ' -->';
 			wp_enqueue_style(
 				'field-converter-styles',
 				dirname(plugin_dir_url(__FILE__)).'/css/field-converter.css'
@@ -65,7 +64,6 @@
 		
 		public function admin_columns_content($column, $post_id) {
 			global $blunt_field_converters;
-			//echo $post_id,'<pre>'; print_r($blunt_field_converters); echo '</pre>';
 			switch ($column) {
 				case 'active':
 					$active = $blunt_field_converters[$post_id]->get_active();

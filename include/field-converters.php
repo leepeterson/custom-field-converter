@@ -17,11 +17,9 @@
 		
 		public function init() {
 			$this->load_converters();
-			//echo '<pre>'; print_r($this->converters); die;
 		} // end public function init
 		
 		private function load_converters() {
-			//echo 'load_converters<br><br>';
 			global $post, $blunt_field_converters;
 			$args = array(
 				'post_type' => apply_filters('field-converter/post-type', ''),
@@ -38,7 +36,6 @@
 				} // end while have_posts()
 			} // end if have_posts()
 			wp_reset_postdata();
-			//echo '<pre>'; print_r($blunt_field_converters); echo '</pre>';
 		} // end private function load_converters
 		
 	} // end class blunt_field_converter
