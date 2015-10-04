@@ -1,13 +1,13 @@
 <?php 
 
-  /*
-    Plugin Name: Custom Field Converter
-    Plugin URI: https://github.com/Hube2/custom-field-converter
-    Description: Convert non standard postmeta fields to standard WP postmeta storage
-    Version: 0.1.0
-    Author: John A. Huebner II
-    Author URI: https://github.com/Hube2
-    License: GPL v2 or later
+	/*
+		Plugin Name: Custom Field Converter
+		Plugin URI: https://github.com/Hube2/custom-field-converter
+		Description: Convert non standard postmeta fields to standard WP postmeta storage
+		Version: 0.1.0
+		Author: John A. Huebner II
+		Author URI: https://github.com/Hube2
+		License: GPL v2 or later
 		
 		This plugin is used to convert serailized arrays and other complex data types into standard WP
 		database storage where each postmets meta_key may be stored in mulitple database rows. This
@@ -18,7 +18,7 @@
 			ACF Enhanced Message Field: https://wordpress.org/plugins/acf-enhanced-message-field/
 			Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
 		
-  */
+	*/
 	
 	// If this file is called directly, abort.
 	if (!defined('WPINC')) {die;}
@@ -31,9 +31,9 @@
 		
 		public function __construct() {
 			register_activation_hook(__FILE__, array($this, 'activate'));
-      register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+			register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 			add_action('init', array($this, 'init'));
-		}  // end public function __construct
+		} // end public function __construct
 		
 		public function activate() {
 			// just in case I need to do something to activate

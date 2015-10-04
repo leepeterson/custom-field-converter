@@ -46,7 +46,7 @@
 		} // end public function post_type
 		
 		public function init() {
-      // register the post type
+			// register the post type
 			$capabilities = array(
 				'edit_post' => 'update_core',
 				'read_post' => 'update_core',
@@ -58,7 +58,7 @@
 			);
 			$capabilities = apply_filters('field-converter/post-type/capabilities', $capabilities);
 			$post_type = apply_filters('field-converter/post-type', '');
-      $args = array(
+			$args = array(
 				'label' => apply_filters('field-converter/post-type/label', ''),
 				'description' => '',
 				'public' => false,
@@ -85,7 +85,7 @@
 				'labels' => apply_filters('field-converter/post-type/labels', array()),
 				'capabilities' => $capabilities,
 			);
-      register_post_type($post_type, $args);
+			register_post_type($post_type, $args);
 		} // end public function init
 		
 	} // end class blunt_field_converter_post_type
