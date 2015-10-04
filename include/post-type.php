@@ -16,31 +16,6 @@
 			add_filter('field-converter/post-type', array($this, 'post_type'));
 		} // end public function __construct
 		
-		public function label($label) {
-			$label = __('Field Converters');
-			return $label;
-		} // end public function label
-		
-		public function labels($labels) {
-			$labels = array (
-				'name' => __('Field Converters'),
-				'singular_name' => __('Field Converter'),
-				'menu_name' => __('Field Converters'),
-				'add_new' => __('Add Field Converter'),
-				'add_new_item' => __('Add New Field Converter'),
-				'edit' => __('Edit'),
-				'edit_item' => __('Edit Field Converter'),
-				'new_item' => __('New Field Converter'),
-				'view' => __('View Field Converter'),
-				'view_item' => __('View Field Converter'),
-				'search_items' => __('Search Field Converters'),
-				'not_found' => __('No Field Converters Found'),
-				'not_found_in_trash' => __('No Field Converters Found in Trash'),
-				'parent' => __('Parent Field Converter')
-			);
-			return $labels;
-		} // end public function labels
-		
 		public function post_type($post_type) {
 			return $this->post_type;
 		} // end public function post_type
@@ -87,6 +62,31 @@
 			);
 			register_post_type($post_type, $args);
 		} // end public function init
+		
+		public function label($label) {
+			$label = __('Field Converters');
+			return $label;
+		} // end public function label
+		
+		public function labels($labels) {
+			$labels = array (
+				'name' => __('Field Converters'),
+				'singular_name' => __('Field Converter'),
+				'menu_name' => __('Field Converters'),
+				'add_new' => __('Add Field Converter'),
+				'add_new_item' => __('Add New Field Converter'),
+				'edit' => __('Edit'),
+				'edit_item' => __('Edit Field Converter'),
+				'new_item' => __('New Field Converter'),
+				'view' => __('View Field Converter'),
+				'view_item' => __('View Field Converter'),
+				'search_items' => __('Search Field Converters'),
+				'not_found' => __('No Field Converters Found'),
+				'not_found_in_trash' => __('No Field Converters Found in Trash'),
+				'parent' => __('Parent Field Converter')
+			);
+			return $labels;
+		} // end public function labels
 		
 	} // end class blunt_field_converter_post_type
 	

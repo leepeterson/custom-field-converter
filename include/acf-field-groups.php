@@ -15,6 +15,20 @@
 			add_filter('acf/load_field/key=field_01acfcfc00024', array($this, 'acf_load_sites_field'));
 		} // end public function __construct
 		
+		public function acf_load_post_types($field) {
+			$args = array(
+				'public' => 'true'
+			);
+			$args = apply_filters('field-converter/load_field/post_type/args', $args);
+			$post_types = get_post_types($args, 'objects');
+			$choices = array();
+			foreach ($post_types as $post_type) {
+				$choices[$post_type->name] = $post_type->label;
+			}
+			$field['choices'] = $choices;
+			return $field;
+		} // end public function acf_load_post_types
+		
 		public function acf_load_sites_field($field) {
 			$choices = array();
 			$blog_id = get_current_blog_id();
@@ -32,22 +46,110 @@
 		public function acf_include_fields() {
 			// register field groups
 			$this->converter_field_group();
-			$this->options_field_group();
 		} // end public function acf_include_fields
 		
-		public function acf_load_post_types($field) {
-			$args = array(
-				'public' => 'true'
+		private function converter_field_group() {
+			$fields = array_merge(
+				$this->field_converter_setting_fields(),
+				$this->field_converter_fields_fields(),
+				$this->field_converter_related_fields()
 			);
-			$args = apply_filters('field-converter/load_field/post_type/args', $args);
-			$post_types = get_post_types($args, 'objects');
-			$choices = array();
-			foreach ($post_types as $post_type) {
-				$choices[$post_type->name] = $post_type->label;
-			}
-			$field['choices'] = $choices;
-			return $field;
-		} // end public function acf_load_post_types
+			$field_group = array(
+				'key' => 'group_01acfcfc00001',
+				'title' => __('Field Converter Settings'),
+				'fields' => $fields,
+				'location' => array(
+					array(
+						array(
+							'param' => 'post_type',
+							'operator' => '==',
+							'value' => apply_filters('field-converter/post-type', ''),
+						),
+					),
+				),
+				'menu_order' => 0,
+				'position' => 'normal',
+				'style' => 'default',
+				'label_placement' => 'top',
+				'instruction_placement' => 'label',
+				'hide_on_screen' => array(
+					0 => 'permalink',
+					1 => 'the_content',
+					2 => 'excerpt',
+					3 => 'custom_fields',
+					4 => 'discussion',
+					5 => 'comments',
+					6 => 'slug',
+					7 => 'author',
+					8 => 'format',
+					9 => 'page_attributes',
+					10 => 'featured_image',
+					11 => 'categories',
+					12 => 'tags',
+					13 => 'send-trackbacks',
+				),
+			);
+			acf_add_local_field_group($field_group);
+		} // end private function converter_field_group
+		
+		private function field_converter_setting_fields() {
+			$fields = array(
+				array(
+					'key' => 'field_01acfcfc00021',
+					'label' => __('Active'),
+					'name' => 'active',
+					'type' => 'true_false',
+					'instructions' => __('Uncheck this field to deactivate this converter. If you want to delete content that has already been converted use the &quot;NUKE&quot; feature on the options page.'),
+					'default_value' => 1,
+				),
+				array(
+					'key' => 'field_01acfcfc00002',
+					'label' => __('Settings'),
+					'type' => 'tab',
+					'placement' => 'top',
+					'endpoint' => 1,
+				),
+				array(
+					'key' => 'field_01acfcfc00003',
+					'label' => __('Post Types'),
+					'name' => 'post_types',
+					'type' => 'select',
+					'instructions' => __('Select the post types that this converter will run for.'),
+					'choices' => array(
+						'this will be dynamically generated' => 'this will be dynamically generated',
+					),
+					'default_value' => array(
+						'' => '',
+					),
+					'allow_null' => 0,
+					'multiple' => 1,
+				),
+				array(
+					'key' => 'field_01acfcfc00004',
+					'label' => __('Hook'),
+					'name' => 'hook',
+					'type' => 'radio',
+					'instructions' => __('Select the action hook that this converter will use. You can add additional hooks to the list. Please ensure that whatever hook you choose runs after postmeta is saved and that the do_action hook passes the Post ID as the first parameter.'),
+					'choices' => array(
+						'acf/save_post' => 'acf/save_post',
+					),
+					'other_choice' => 1,
+					'save_other_choice' => 1,
+					'default_value' => 'acf/save_post',
+					'layout' => 'horizontal',
+				),
+				array(
+					'key' => 'field_01acfcfc00005',
+					'label' => __('Prioity'),
+					'name' => 'priority',
+					'type' => 'number',
+					'instructions' => __('Enter the priority to set for this action. The priority should ensure that postmeta values have been saved before the action is called. For example, in ACF a priority of 20 should be used to run after ACF has saved postmeta to the database. This setting is made available for users that may be using a different custom field plugin that requires a different priority for a different hook. If you are using ACF you should not edit this setting.'),
+					'default_value' => 20,
+					'step' => 1,
+				)
+			);
+			return $fields;
+		} // end private function 
 		
 		private function field_converter_fields_fields($single=false) {
 			$this->fields_instance++;
@@ -292,114 +394,7 @@
 				),
 			);
 			return $fields;
-		} // end private function field_converter_related_fields
-		
-		private function field_converter_setting_fields() {
-			$fields = array(
-				array(
-					'key' => 'field_01acfcfc00021',
-					'label' => __('Active'),
-					'name' => 'active',
-					'type' => 'true_false',
-					'instructions' => __('Uncheck this field to deactivate this converter. If you want to delete content that has already been converted use the &quot;NUKE&quot; feature on the options page.'),
-					'default_value' => 1,
-				),
-				array(
-					'key' => 'field_01acfcfc00002',
-					'label' => __('Settings'),
-					'type' => 'tab',
-					'placement' => 'top',
-					'endpoint' => 1,
-				),
-				array(
-					'key' => 'field_01acfcfc00003',
-					'label' => __('Post Types'),
-					'name' => 'post_types',
-					'type' => 'select',
-					'instructions' => __('Select the post types that this converter will run for.'),
-					'choices' => array(
-						'this will be dynamically generated' => 'this will be dynamically generated',
-					),
-					'default_value' => array(
-						'' => '',
-					),
-					'allow_null' => 0,
-					'multiple' => 1,
-				),
-				array(
-					'key' => 'field_01acfcfc00004',
-					'label' => __('Hook'),
-					'name' => 'hook',
-					'type' => 'radio',
-					'instructions' => __('Select the action hook that this converter will use. You can add additional hooks to the list. Please ensure that whatever hook you choose runs after postmeta is saved and that the do_action hook passes the Post ID as the first parameter.'),
-					'choices' => array(
-						'acf/save_post' => 'acf/save_post',
-					),
-					'other_choice' => 1,
-					'save_other_choice' => 1,
-					'default_value' => 'acf/save_post',
-					'layout' => 'horizontal',
-				),
-				array(
-					'key' => 'field_01acfcfc00005',
-					'label' => __('Prioity'),
-					'name' => 'priority',
-					'type' => 'number',
-					'instructions' => __('Enter the priority to set for this action. The priority should ensure that postmeta values have been saved before the action is called. For example, in ACF a priority of 20 should be used to run after ACF has saved postmeta to the database. This setting is made available for users that may be using a different custom field plugin that requires a different priority for a different hook. If you are using ACF you should not edit this setting.'),
-					'default_value' => 20,
-					'step' => 1,
-				)
-			);
-			return $fields;
-		} // end private function field_converter_setting_fields
-		
-		private function converter_field_group() {
-			$fields = array_merge(
-				$this->field_converter_setting_fields(),
-				$this->field_converter_fields_fields(),
-				$this->field_converter_related_fields()
-			);
-			$field_group = array(
-				'key' => 'group_01acfcfc00001',
-				'title' => __('Field Converter Settings'),
-				'fields' => $fields,
-				'location' => array(
-					array(
-						array(
-							'param' => 'post_type',
-							'operator' => '==',
-							'value' => apply_filters('field-converter/post-type', ''),
-						),
-					),
-				),
-				'menu_order' => 0,
-				'position' => 'normal',
-				'style' => 'default',
-				'label_placement' => 'top',
-				'instruction_placement' => 'label',
-				'hide_on_screen' => array(
-					0 => 'permalink',
-					1 => 'the_content',
-					2 => 'excerpt',
-					3 => 'custom_fields',
-					4 => 'discussion',
-					5 => 'comments',
-					6 => 'slug',
-					7 => 'author',
-					8 => 'format',
-					9 => 'page_attributes',
-					10 => 'featured_image',
-					11 => 'categories',
-					12 => 'tags',
-					13 => 'send-trackbacks',
-				),
-			);
-			acf_add_local_field_group($field_group);
-		} // end private function converter_field_group
-		
-		private function options_field_group() {
-			
-		} // end private function options_field_group
+		} // end private function field_converter_related_fieldsfield_converter_setting_fields
 		
 	} // end class blunt_field_converter_acf_field_groups
 	

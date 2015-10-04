@@ -12,6 +12,12 @@
 			add_action('admin_enqueue_scripts', array($this, 'enqueue'));
 		} // end public function __construct
 		
+		public function init() {
+			$post_type = apply_filters('field-converter/post-type', '');
+			add_filter('manage_edit-'.$post_type.'_columns', array($this, 'admin_columns'));
+			add_action('manage_'.$post_type.'_posts_custom_column', array($this, 'admin_columns_content'), 10, 2 );
+		} // end public function init
+		
 		public function enqueue() {
 			$post_type = apply_filters('field-converter/post-type', '');
 			$screen = get_current_screen();
@@ -34,12 +40,6 @@
 				array('ajax_url' => admin_url('admin-ajax.php'))
 			);
 		} // end public function enqueue
-		
-		public function init() {
-			$post_type = apply_filters('field-converter/post-type', '');
-			add_filter('manage_edit-'.$post_type.'_columns', array($this, 'admin_columns'));
-			add_action('manage_'.$post_type.'_posts_custom_column', array($this, 'admin_columns_content'), 10, 2 );
-		} // end public function init
 		
 		public function admin_columns($columns) {
 			$new_columns = array();

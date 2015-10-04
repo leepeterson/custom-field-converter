@@ -15,8 +15,8 @@
 		
 		This plugin requires:
 			ACF Pro: http://www.advancedcustomfields.com/pro/
-			ACF Enhanced Message Field: https://wordpress.org/plugins/acf-enhanced-message-field/
-			Blunt Ajax: https://wordpress.org/plugins/blunt-ajax/
+		
+		This plugin will not provide any functionality if ACF is not installed
 		
 	*/
 	
