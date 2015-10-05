@@ -1,7 +1,7 @@
 # Custom Field Converter for ACF
 
-This plugin requires that Advanced Custom Fields 5 Pro (ACF). This plugin will not provide any
-funtionality if ACF is not installed.
+This plugin requires Advanced Custom Fields 5 Pro (ACF) and 
+will not provide any funtionality if ACF is not installed.
 
 ***Please submit bugs, problems, comments & questions [here](https://github.com/Hube2/custom-field-converter/issues).***
 
@@ -46,11 +46,15 @@ filter that will allow you to add additional fields, see filters below.
 ##Check & Repair
 The check and repair feature checks all posts associated with a converter and performs the convert 
 on all the posts. This is usefull if you think there may be problems with the converted data or you 
-have change the converter after adding posts and you need to make the changes effect these previous posts.
+have changed the converter or fields after adding posts and you need to make the changes effect 
+older posts. During this process data stored in old field names that no longer exist or have been changed
+will also be remove.
 
 ##Nuke
 The nuke feature allows you to delete all converted custom fields for all posts that are 
-associated with the converter.
+associated with the converter. All field names that have ever been used in the converter are 
+stored. This means that even if you change the name of a field that the older fields will still be 
+deleted when you run this feature so that no traces of any converted content will exist.
 
 ##Hooks
 
@@ -81,7 +85,11 @@ function my_custom_data_filter($data) {
 
 ####field-converter/load_field/post_type/args
 
-This filter allows you do allter the post types loaded into the post type selection field of the field converter settings. These are the arguments used to get the list of post types and it conforms to the format of the wordpress function [get_post_types()](https://codex.wordpress.org/Function_Reference/get_post_types)
+This filter allows you do alter the post types loaded into the post type selection field of the 
+field converter settings. These are the arguments used to get the list of post types and it conforms 
+to the format of the wordpress function
+[get_post_types()](https://codex.wordpress.org/Function_Reference/get_post_types). By default only
+public post types are made available for conversion.
 
 The default values of $args:
 ```
@@ -100,7 +108,10 @@ function converter_post_type_args($args) {
 
 
 ####field-converter/post-type/capabilities
-This filter allows you to change the capablities for viewing and editing field converters. The default value for all arguments is `update_core` meaning that only an admin user, or the super admin user on multisite, can edit or view field converters. You can change this if you want other types of users to have access. Additional capabilites not listed can also be added if you choose.
+This filter allows you to change the capablities for viewing and editing field converters. The default 
+value for all arguments is `update_core` meaning that only an admin user, or the super admin user on 
+multisite, can edit or view field converters. You can change this if you want other types of users to 
+have access. Additional capabilites not listed can also be added if you choose.
 
 The default values are:
 ```
@@ -134,7 +145,10 @@ function my_converter_capabilities($capabilities) {
 
 
 ####field-converter/repair_capibility
-This filter sets the capability required to initiate the **Check & Repair** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
+This filter sets the capability required to initiate the **Check & Repair** feature. The default 
+value for this feature is `update_core` meaning that only an admin user, or the super admin user 
+on multisite, can initiate a the feature. You can change this if you want other types of users to 
+have access to this feature.
 
 Example:
 ```
@@ -147,7 +161,10 @@ my_repair_capibility($capability) {
 
 
 ####field-converter/nuke_capibility
-This filter sets the capability required to initiate the **Nuke** feature. The default value for this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, can initiate a the feature. You can change this if you want other types of users to have access to this feature.
+This filter sets the capability required to initiate the **Nuke** feature. The default value for 
+this feature is `update_core` meaning that only an admin user, or the super admin user on multisite, 
+can initiate a the feature. You can change this if you want other types of users to have access to 
+this feature.
 
 Example:
 ```
