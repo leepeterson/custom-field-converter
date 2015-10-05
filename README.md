@@ -56,6 +56,11 @@ associated with the converter. All field names that have ever been used in the c
 stored. This means that even if you change the name of a field that the older fields will still be 
 deleted when you run this feature so that no traces of any converted content will exist.
 
+Please note: If you change the post types associated with a converter that this operation will not
+be able to find and delete the data. If you are going to change the post type(s) for a converter,
+first make the converter inactive and nuke all the data, then change the post types and reactivate
+the converter. Once this is done you can then perform a check and repair to build the data again.
+
 ##Hooks
 
 ###Filters
