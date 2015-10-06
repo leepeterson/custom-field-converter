@@ -5,7 +5,6 @@
 	
 	$converter_file_base = dirname(__FILE__);
 	require($converter_file_base.'/post-type.php');
-	require($converter_file_base.'/settings.php');
 	require($converter_file_base.'/acf-field-groups.php');
 	require($converter_file_base.'/field-converters.php');
 	require($converter_file_base.'/field-converter.php');
