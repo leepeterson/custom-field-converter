@@ -73,6 +73,8 @@ Example:
 add_filter('field_converter/additional_data', 'my_custom_data_filter');
 function my_custom_data_filter($data) {
   $data = array(
+    // each element is
+    // new meta_key => array of values
     'my_extra_field_1' => array(
       'value 1',
       'value 2'
