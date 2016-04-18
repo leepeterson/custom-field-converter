@@ -479,7 +479,9 @@
 				'name' => $this->name,
 			);
 			$json = json_encode($data);
-			ob_end_clean();
+			while (ob_get_level()) {
+				ob_end_clean();
+			}
 			apache_setenv('no-gzip', 1);
 			ini_set('zlib.output_compression', 0);
 			set_time_limit(0);
