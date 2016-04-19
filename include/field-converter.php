@@ -482,7 +482,10 @@
 			while (ob_get_level()) {
 				ob_end_clean();
 			}
-			apache_setenv('no-gzip', 1);
+			if(function_exists('apache_setenv')) {
+				apache_setenv('no-gzip', 1);
+			}
+			header('X-Accel-Buffering: no');
 			ini_set('zlib.output_compression', 0);
 			set_time_limit(0);
 			ignore_user_abort(true);
