@@ -57,6 +57,7 @@
 		} // public function get_nuking
 				
 		public function update_post($post_id) {
+			$this->data = array();
 			$post_type = get_post_type($post_id);
 			if (!in_array($post_type, $this->post_types)) {
 				return;
