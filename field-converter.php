@@ -4,9 +4,10 @@
 		Plugin Name: Custom Field Converter
 		Plugin URI: https://github.com/Hube2/custom-field-converter
 		Description: Convert non standard postmeta fields to standard WP postmeta storage
-		Version: 0.1.1
+		Version: 0.1.2
 		Author: John A. Huebner II
 		Author URI: https://github.com/Hube2
+		GitHub Plugin URI: https://github.com/Hube2/custom-field-converter
 		License: GPL v2 or later
 		
 		This plugin is used to convert serailized arrays and other complex data types into standard WP
